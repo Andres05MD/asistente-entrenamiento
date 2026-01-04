@@ -1,0 +1,60 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper: Check if the user is accessing their own User Profile doc
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Helper: Check ownership based on 'userId' field in the document
+    // Handles Create (check new data) and Read/Update/Delete (check existing data)
+    function isResourceOwner() {
+      return isAuthenticated() && (
+        resource == null 
+          ? request.resource.data.userId == request.auth.uid 
+          : resource.data.userId == request.auth.uid
+      );
+    }
+
+    // --- Collections ---
+
+    // Users Collection (Keyed by Auth UID)
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Rutinas
+    match /rutinas/{rutinaId} {
+      allow read, write: if isResourceOwner();
+    }
+
+    // Ejercicios
+    // Note: If you plan to have "Public" exercises (system defaults) later,
+    // you might need: OR resource.data.isPublic == true (for read only)
+    match /ejercicios/{ejercicioId} {
+      allow read, write: if isResourceOwner();
+    }
+
+    // Workout Logs
+    match /workout_logs/{logId} {
+      allow read, write: if isResourceOwner();
+    }
+
+    // Weight Logs
+    match /weight_logs/{logId} {
+      allow read, write: if isResourceOwner();
+    }
+
+    // Measurement Logs
+    match /measurement_logs/{logId} {
+      allow read, write: if isResourceOwner();
+    }
+  }
+}
