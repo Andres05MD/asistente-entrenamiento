@@ -38,11 +38,18 @@ export function GeneratedRoutinePreview({
                                             title="Clic para cambiar ejercicio"
                                         >
                                             <div>
-                                                <div className="font-medium text-white flex items-center gap-2">
-                                                    {ex.name}
-                                                    {ex.exerciseId && (
-                                                        <span className="text-green-400 text-[10px] bg-green-500/10 px-1 py-0.5 rounded flex items-center gap-1">
-                                                            <FaLink /> Vinculado
+                                                <div className="font-medium text-white flex flex-col gap-1">
+                                                    <div className="flex items-center gap-2">
+                                                        {ex.name}
+                                                        {ex.exerciseId && (
+                                                            <span className="text-green-400 text-[10px] bg-green-500/10 px-1 py-0.5 rounded flex items-center gap-1">
+                                                                <FaLink /> Vinculado
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    {ex.muscleGroup && (
+                                                        <span className="text-[10px] text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded w-fit border border-purple-500/20">
+                                                            {ex.muscleGroup}
                                                         </span>
                                                     )}
                                                 </div>

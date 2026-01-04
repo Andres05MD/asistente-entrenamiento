@@ -129,6 +129,11 @@ export default function RoutineDetailPage() {
                                                     </span>
                                                 )}
                                             </h3>
+                                            {exercise.muscleGroup && (
+                                                <Badge variant="outline" className="mt-1 text-[10px] px-2 py-0 h-auto border-purple-500/30 text-purple-400 bg-purple-500/10">
+                                                    {exercise.muscleGroup}
+                                                </Badge>
+                                            )}
                                             {exercise.notes && (
                                                 <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
                                                     <FaStickyNote className="text-yellow-500/50" /> {exercise.notes}
