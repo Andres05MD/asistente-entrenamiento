@@ -3,7 +3,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FaCog, FaSpinner } from "react-icons/fa";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { WorkoutLog } from "@/types";
 
 interface RoutinePreferencesFormProps {
@@ -48,7 +47,7 @@ export function RoutinePreferencesForm({
 }: RoutinePreferencesFormProps) {
     return (
         <div className="flex flex-col h-full">
-            <ScrollArea className="flex-1 pr-4 -mr-4">
+            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
                 <div className="space-y-6 pb-4">
                     <div className="space-y-2">
                         <Label className="text-white">¿Qué quieres entrenar?</Label>
@@ -184,19 +183,22 @@ export function RoutinePreferencesForm({
                             * La IA tendrá en cuenta tus últimos {Math.min(workoutLogs.length, 5)} entrenamientos para ajustar el volumen.
                         </p>
                     )}
-                    <Button
-                        onClick={handleGenerate}
-                        disabled={loading || !prompt}
-                        className="w-full bg-primary"
-                    >
-                        {loading ? (
-                            <><FaSpinner className="animate-spin mr-2" /> Analizando historial y ejercicios...</>
-                        ) : (
-                            "Generar Rutina"
-                        )}
-                    </Button>
                 </div>
-            </ScrollArea>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-white/10 shrink-0">
+                <Button
+                    onClick={handleGenerate}
+                    disabled={loading || !prompt}
+                    className="w-full bg-primary"
+                >
+                    {loading ? (
+                        <><FaSpinner className="animate-spin mr-2" /> Analizando historial y ejercicios...</>
+                    ) : (
+                        "Generar Rutina"
+                    )}
+                </Button>
+            </div>
         </div>
     );
 }

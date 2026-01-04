@@ -46,15 +46,6 @@ export default function MobileNav() {
 
     return (
         <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-black/50 backdrop-blur-lg border-b border-white/10 flex items-center justify-between px-4 z-50">
-            <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center">
-                    <FaDumbbell className="text-white text-md" />
-                </div>
-                <span className="font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                    Entrenador IA
-                </span>
-            </Link>
-
             <Sheet open={open} onOpenChange={setOpen}>
                 <SheetTrigger asChild>
                     <Button variant="ghost" size="icon" className="text-white" suppressHydrationWarning>
@@ -111,6 +102,15 @@ export default function MobileNav() {
                     </div>
                 </SheetContent>
             </Sheet>
+
+            <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center">
+                    <FaDumbbell className="text-white text-md" />
+                </div>
+                <span className="font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                    Entrenador IA
+                </span>
+            </Link>
         </div>
     );
 }
