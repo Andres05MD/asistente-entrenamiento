@@ -95,6 +95,10 @@ La arquitectura se basa en un ecosistema moderno, escalable y reactivo:
 *   **Reglas de Firestore (Security Rules):** Se implementó un archivo `firestore.rules` robusto que garantiza la privacidad de los datos.
     *   **Acceso Estricto por Propietario:** Cada usuario solo puede leer, escribir o modificar sus propios documentos (`users`, `rutinas`, `ejercicios`, `logs`).
     *   **Validación de Creación:** Al crear nuevos registros, se fuerza que el `userId` coincida con el usuario autenticado.
+    *   **Protección de Rutas (Client-Side):** Se implementó una capa de seguridad en el frontend (`DashboardLayout` y páginas de Auth) que fuerza el inicio de sesión para acceder al sistema y redirige automáticamente a los usuarios autenticados lejos de las páginas de login/registro.
+
+### Navegación
+*   **Logout Accesible:** Se añadió un botón de "Cerrar Sesión" permanentemente visible en el Sidebar (escritorio) y menú móvil, asegurando que el usuario siempre pueda salir de su cuenta fácilmente.
 91: 
 92: ---
 93: 

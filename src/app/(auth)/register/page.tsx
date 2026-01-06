@@ -7,9 +7,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { doc, setDoc } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
 import {
     Form,
     FormControl,
@@ -43,9 +44,17 @@ const registerSchema = z.object({
 
 export default function RegisterPage() {
     const router = useRouter();
+    const { user, loading: authLoading } = useAuth();
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    useEffect(() => {
+        if (!authLoading && user) {
+            router.push("/dashboard");
+        }
+    }, [user, authLoading, router]);
+
     const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
@@ -100,6 +109,8 @@ export default function RegisterPage() {
             setLoading(false);
         }
     }
+
+    if (authLoading) return null;
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-zinc-900 to-black p-4 py-8">

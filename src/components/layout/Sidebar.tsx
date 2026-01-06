@@ -42,8 +42,8 @@ export default function Sidebar() {
     };
 
     return (
-        <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 border-r border-white/10 bg-black/40 backdrop-blur-xl supports-[backdrop-filter]:bg-black/20">
-            <Link href="/dashboard" className="p-6 flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
+        <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 border-r border-white/10 bg-black/40 backdrop-blur-xl supports-[backdrop-filter]:bg-black/20 overflow-hidden">
+            <Link href="/dashboard" className="p-6 flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer flex-shrink-0">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center">
                     <FaDumbbell className="text-white text-lg" />
                 </div>
@@ -52,7 +52,7 @@ export default function Sidebar() {
                 </span>
             </Link>
 
-            <nav className="flex-1 px-4 py-4 space-y-2">
+            <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
                 {sidebarItems.map((item) => {
                     const isActive = pathname === item.href;
                     return (
@@ -80,7 +80,7 @@ export default function Sidebar() {
                 })}
             </nav>
 
-            <div className="p-4 border-t border-white/10">
+            <div className="p-4 border-t border-white/10 flex-shrink-0">
                 <Button
                     variant="ghost"
                     className="w-full justify-start gap-3 text-muted-foreground hover:text-red-400 hover:bg-red-500/10"

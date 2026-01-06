@@ -6,12 +6,36 @@ import AIChat from "@/components/layout/AIChat";
 import { Toaster } from "react-hot-toast";
 import AnimatedBackground from "@/components/ui/animated-background";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const { user, loading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!loading && !user) {
+            router.push("/login"); // Redirect to login page if user is not authenticated
+        }
+    }, [user, loading, router]);
+
+    if (loading) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center bg-background">
+                <div className="text-white text-xl animate-pulse">Cargando...</div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return null; // Avoid flashing content before redirect
+    }
+
     return (
         <TooltipProvider>
             <div className="flex h-full min-h-screen bg-background relative">
