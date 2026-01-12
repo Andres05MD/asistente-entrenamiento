@@ -67,14 +67,19 @@ export default function PerfilPage() {
 
     useEffect(() => {
         if (profile) {
+            const validLevels = ["Principiante", "Intermedio", "Avanzado"];
+            const validGoals = ["Hipertrofia", "Fuerza", "Perdida de Peso", "Resistencia"];
+            const validEquipment = ["Gimnasio Comercial", "Mancuernas", "Peso Corporal", "Home Gym"];
+            const validGenders = ["Hombre", "Mujer", "Otro"];
+
             form.reset({
                 name: profile.displayName || user?.displayName || "",
                 age: profile.age,
-                level: profile.level || "Principiante",
-                goal: profile.goal || "Hipertrofia",
+                level: validLevels.includes(profile.level || "") ? profile.level : "Principiante",
+                goal: validGoals.includes(profile.goal || "") ? profile.goal : "Hipertrofia",
                 days: profile.days || 4,
-                equipment: profile.equipment || "Gimnasio Comercial",
-                gender: profile.gender || "Hombre",
+                equipment: validEquipment.includes(profile.equipment || "") ? profile.equipment : "Gimnasio Comercial",
+                gender: validGenders.includes(profile.gender || "") ? profile.gender : "Hombre",
             });
         }
     }, [user, profile, form]);
@@ -382,7 +387,7 @@ export default function PerfilPage() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-white/80">Nivel de Experiencia</FormLabel>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                                    <Select onValueChange={field.onChange} value={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger className="bg-white/5 border-white/10 text-white">
                                                                 <SelectValue placeholder="Selecciona..." />
@@ -405,7 +410,7 @@ export default function PerfilPage() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-white/80">Objetivo Principal</FormLabel>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                                    <Select onValueChange={field.onChange} value={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger className="bg-white/5 border-white/10 text-white">
                                                                 <SelectValue placeholder="Selecciona..." />
@@ -451,7 +456,7 @@ export default function PerfilPage() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-white/80">Equipo Disponible</FormLabel>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                                    <Select onValueChange={field.onChange} value={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger className="bg-white/5 border-white/10 text-white">
                                                                 <SelectValue placeholder="Selecciona..." />
@@ -475,7 +480,7 @@ export default function PerfilPage() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-white/80">Género</FormLabel>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                                    <Select onValueChange={field.onChange} value={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger className="bg-white/5 border-white/10 text-white">
                                                                 <SelectValue placeholder="Selecciona..." />
