@@ -66,6 +66,9 @@ export interface UserProfile {
     equipment?: EquipmentType;
     gender?: GenderType;
     age?: number;
+    // Gamification
+    xp?: number;
+    currentLevel?: number;
     createdAt?: string;
     settings?: {
         theme: 'light' | 'dark';

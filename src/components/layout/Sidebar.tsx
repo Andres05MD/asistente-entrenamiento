@@ -14,6 +14,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { signOut } from "firebase/auth";
+import { useGamification } from "@/hooks/useGamification";
+import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -29,6 +31,8 @@ const sidebarItems = [
 export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
+    const { user, profile } = useAuth();
+    const { currentLevel, progress } = useGamification();
 
     const handleLogout = async () => {
         try {
@@ -80,7 +84,39 @@ export default function Sidebar() {
                 })}
             </nav>
 
-            <div className="p-4 border-t border-white/10 flex-shrink-0">
+            <div className="p-4 border-t border-white/10 flex-shrink-0 space-y-4">
+                {/* Profile Card & Gamification */}
+                <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg uppercase">
+                            {profile?.displayName?.[0] || user?.email?.[0] || "U"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-white truncate">{profile?.displayName || "Usuario"}</p>
+                            <p className="text-xs text-muted-foreground">Nivel {currentLevel}</p>
+                        </div>
+                        <div className="text-xs font-bold text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded">
+                            Lvl {currentLevel}
+                        </div>
+                    </div>
+
+                    {/* XP Bar */}
+                    <div className="space-y-1">
+                        <div className="flex justify-between text-[10px] text-muted-foreground">
+                            <span>XP</span>
+                            <span>{Math.floor(progress)}%</span>
+                        </div>
+                        <div className="h-1.5 bg-black/50 rounded-full overflow-hidden">
+                            <motion.div
+                                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${progress}%` }}
+                                transition={{ duration: 1, ease: "easeOut" }}
+                            />
+                        </div>
+                    </div>
+                </div>
+
                 <Button
                     variant="ghost"
                     className="w-full justify-start gap-3 text-muted-foreground hover:text-red-400 hover:bg-red-500/10"

@@ -43,7 +43,7 @@ export default function DashboardLayout({
                 <Sidebar />
                 <MobileNav />
                 <AIChat />
-                <main className="flex-1 overflow-y-auto w-full p-4 md:p-8 pt-20 md:pt-8 scroll-smooth relative z-10">
+                <main className="flex-1 overflow-y-auto w-full p-4 md:p-8 pt-4 md:pt-8 pb-24 md:pb-8 scroll-smooth relative z-10">
                     <div className="max-w-7xl mx-auto space-y-8">
                         {children}
                     </div>

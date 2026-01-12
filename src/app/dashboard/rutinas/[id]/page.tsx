@@ -12,6 +12,8 @@ import { FaArrowLeft, FaCalendarAlt, FaDumbbell, FaClock, FaStickyNote, FaLink }
 import { Routine, DayRoutine, Exercise } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { motion } from "framer-motion";
+
 export default function RoutineDetailPage() {
     const params = useParams();
     const router = useRouter();
@@ -43,6 +45,25 @@ export default function RoutineDetailPage() {
         }
     }, [id]);
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { x: -20, opacity: 0 },
+        visible: {
+            x: 0,
+            opacity: 1,
+            transition: { duration: 0.3 }
+        }
+    };
+
     if (loading) {
         return (
             <div className="space-y-6">
@@ -61,7 +82,11 @@ export default function RoutineDetailPage() {
     if (!rutina) return <div className="text-white">Rutina no encontrada</div>;
 
     return (
-        <div className="space-y-6">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-6"
+        >
             <Button
                 variant="ghost"
                 className="text-muted-foreground hover:text-white mb-4 pl-0 hover:bg-transparent transition-colors"
@@ -115,60 +140,67 @@ export default function RoutineDetailPage() {
                                 </Button>
                             </CardHeader>
                             <CardContent className="space-y-0">
-                                {day.exercises.map((exercise: Exercise, exIndex: number) => (
-                                    <div
-                                        key={exIndex}
-                                        className="flex flex-col md:flex-row md:items-center justify-between p-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors gap-4"
-                                    >
-                                        <div className="flex-1">
-                                            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                                {exercise.name}
-                                                {exercise.exerciseId && (
-                                                    <span title="Vinculado a tu biblioteca" className="text-green-400 bg-green-500/10 p-1 rounded-full text-xs">
-                                                        <FaLink />
-                                                    </span>
+                                <motion.div
+                                    variants={containerVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                >
+                                    {day.exercises.map((exercise: Exercise, exIndex: number) => (
+                                        <motion.div
+                                            key={exIndex}
+                                            variants={itemVariants}
+                                            className="flex flex-col md:flex-row md:items-center justify-between p-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors gap-4"
+                                        >
+                                            <div className="flex-1">
+                                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                                    {exercise.name}
+                                                    {exercise.exerciseId && (
+                                                        <span title="Vinculado a tu biblioteca" className="text-green-400 bg-green-500/10 p-1 rounded-full text-xs">
+                                                            <FaLink />
+                                                        </span>
+                                                    )}
+                                                </h3>
+                                                {exercise.muscleGroup && (
+                                                    <Badge variant="outline" className="mt-1 text-[10px] px-2 py-0 h-auto border-purple-500/30 text-purple-400 bg-purple-500/10">
+                                                        {exercise.muscleGroup}
+                                                    </Badge>
                                                 )}
-                                            </h3>
-                                            {exercise.muscleGroup && (
-                                                <Badge variant="outline" className="mt-1 text-[10px] px-2 py-0 h-auto border-purple-500/30 text-purple-400 bg-purple-500/10">
-                                                    {exercise.muscleGroup}
-                                                </Badge>
-                                            )}
-                                            {exercise.grip && (
-                                                <Badge variant="outline" className="mt-1 ml-2 text-[10px] px-2 py-0 h-auto border-orange-500/30 text-orange-400 bg-orange-500/10">
-                                                    {exercise.grip}
-                                                </Badge>
-                                            )}
-                                            {exercise.notes && (
-                                                <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                                                    <FaStickyNote className="text-yellow-500/50" /> {exercise.notes}
-                                                </p>
-                                            )}
-                                        </div>
+                                                {exercise.grip && (
+                                                    <Badge variant="outline" className="mt-1 ml-2 text-[10px] px-2 py-0 h-auto border-orange-500/30 text-orange-400 bg-orange-500/10">
+                                                        {exercise.grip}
+                                                    </Badge>
+                                                )}
+                                                {exercise.notes && (
+                                                    <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                                                        <FaStickyNote className="text-yellow-500/50" /> {exercise.notes}
+                                                    </p>
+                                                )}
+                                            </div>
 
-                                        <div className="flex items-center gap-6 text-sm">
-                                            <div className="text-center min-w-[60px]">
-                                                <div className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Series</div>
-                                                <div className="font-bold text-white text-lg">{exercise.sets}</div>
-                                            </div>
-                                            <div className="text-center min-w-[60px]">
-                                                <div className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Reps</div>
-                                                <div className="font-bold text-white text-lg">{exercise.reps}</div>
-                                            </div>
-                                            <div className="text-center min-w-[60px]">
-                                                <div className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Descanso</div>
-                                                <div className="font-bold text-primary flex items-center justify-center gap-1">
-                                                    <FaClock className="h-3 w-3" /> {exercise.rest}s
+                                            <div className="flex items-center gap-6 text-sm">
+                                                <div className="text-center min-w-[60px]">
+                                                    <div className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Series</div>
+                                                    <div className="font-bold text-white text-lg">{exercise.sets}</div>
+                                                </div>
+                                                <div className="text-center min-w-[60px]">
+                                                    <div className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Reps</div>
+                                                    <div className="font-bold text-white text-lg">{exercise.reps}</div>
+                                                </div>
+                                                <div className="text-center min-w-[60px]">
+                                                    <div className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Descanso</div>
+                                                    <div className="font-bold text-primary flex items-center justify-center gap-1">
+                                                        <FaClock className="h-3 w-3" /> {exercise.rest}s
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                ))}
+                                        </motion.div>
+                                    ))}
+                                </motion.div>
                             </CardContent>
                         </Card>
                     </TabsContent>
                 ))}
             </Tabs>
-        </div>
+        </motion.div>
     );
 }

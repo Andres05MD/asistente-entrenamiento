@@ -69,32 +69,33 @@ export default function RutinasPage() {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="space-y-8 animate-in fade-in-50 duration-500">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-white">Mis Rutinas</h1>
-                    <p className="text-muted-foreground">Gestiona y personaliza tus planes de entrenamiento.</p>
+                    <h1 className="text-4xl font-bold tracking-tight text-white mb-2">Mis Rutinas</h1>
+                    <p className="text-lg text-muted-foreground">Gestiona y personaliza tus planes de entrenamiento.</p>
                 </div>
                 <AIRoutineGenerator onRoutineGenerated={handleSaveRoutine} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {isLoading ? (
-                    // Skeleton Loading
                     Array.from({ length: 3 }).map((_, i) => (
                         <div key={i} className="flex flex-col space-y-3">
-                            <Skeleton className="h-[200px] w-full rounded-xl bg-white/5" />
+                            <Skeleton className="h-[200px] w-full rounded-2xl bg-zinc-900/50" />
                             <div className="space-y-2">
-                                <Skeleton className="h-4 w-[250px] bg-white/5" />
-                                <Skeleton className="h-4 w-[200px] bg-white/5" />
+                                <Skeleton className="h-4 w-[60%] bg-zinc-900/50" />
+                                <Skeleton className="h-4 w-[40%] bg-zinc-900/50" />
                             </div>
                         </div>
                     ))
                 ) : rutinas.length === 0 ? (
-                    <div className="col-span-full text-center py-12 bg-white/5 rounded-xl border border-dashed border-white/10">
-                        <FaDumbbell className="mx-auto h-12 w-12 text-muted-foreground mb-4 opacity-50" />
-                        <h3 className="text-lg font-medium text-white">No tienes rutinas aún</h3>
-                        <p className="text-muted-foreground mb-4">Usa el generador IA o crea una manualmente.</p>
+                    <div className="col-span-full text-center py-20 bg-zinc-900/30 rounded-3xl border border-dashed border-white/10 flex flex-col items-center justify-center">
+                        <div className="p-4 bg-zinc-800/50 rounded-full mb-4">
+                            <FaDumbbell className="h-10 w-10 text-zinc-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2">No tienes rutinas aún</h3>
+                        <p className="text-zinc-400 mb-6 max-w-sm">Usa el generador con Inteligencia Artificial o crea una manualmente para empezar.</p>
                     </div>
                 ) : (
                     rutinas.map((rutina: Routine, index: number) => (
@@ -105,30 +106,31 @@ export default function RutinasPage() {
                             transition={{ delay: index * 0.1 }}
                             className="h-full"
                         >
-                            <Link href={`/dashboard/rutinas/${rutina.id}`} className="block h-full">
-                                <Card className="h-full bg-card/50 backdrop-blur-sm border-white/5 hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5 group cursor-pointer flex flex-col">
+                            <Link href={`/dashboard/rutinas/${rutina.id}`} className="block h-full group">
+                                <Card className="h-full bg-gradient-to-br from-zinc-900/90 to-zinc-900/50 backdrop-blur-xl border-white/5 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 rounded-2xl overflow-hidden flex flex-col">
+                                    <div className="h-1 w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                     <CardHeader>
                                         <CardTitle className="flex justify-between items-start gap-2">
-                                            <span className="truncate group-hover:text-primary transition-colors">{rutina.routineName}</span>
-                                            <AnimatedBadge variant="default" className="shrink-0">
+                                            <span className="truncate text-xl group-hover:text-primary transition-colors">{rutina.routineName}</span>
+                                            <AnimatedBadge variant="default" className="shrink-0 bg-primary/10 text-primary border-primary/20">
                                                 {rutina.days?.length || 0} Días
                                             </AnimatedBadge>
                                         </CardTitle>
-                                        <CardDescription className="line-clamp-2">{rutina.description}</CardDescription>
+                                        <CardDescription className="line-clamp-2 text-zinc-400 pt-2">{rutina.description}</CardDescription>
                                     </CardHeader>
                                     <CardContent className="flex-1">
-                                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                            <div className="flex items-center gap-1">
-                                                <FaClock className="text-primary/70" />
+                                        <div className="flex items-center gap-4 text-sm text-zinc-500 font-medium">
+                                            <div className="flex items-center gap-2 bg-black/20 px-3 py-1.5 rounded-lg border border-white/5">
+                                                <FaClock className="text-primary" />
                                                 <span>~60 min/sesión</span>
                                             </div>
                                         </div>
                                     </CardContent>
-                                    <CardFooter className="flex justify-end gap-2 border-t border-white/5 pt-4 mt-auto">
+                                    <CardFooter className="flex justify-end gap-2 border-t border-white/5 pt-4 mt-auto bg-black/20">
                                         <Button
-                                            size="icon"
+                                            size="sm"
                                             variant="ghost"
-                                            className="h-8 w-8 hover:bg-white/10 hover:text-white"
+                                            className="h-9 w-9 p-0 rounded-lg hover:bg-blue-500/10 hover:text-blue-400 transition-colors"
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 // Edit logic
@@ -137,9 +139,9 @@ export default function RutinasPage() {
                                             <FaEdit className="h-4 w-4" />
                                         </Button>
                                         <Button
-                                            size="icon"
+                                            size="sm"
                                             variant="ghost"
-                                            className="h-8 w-8 hover:bg-red-500/20 hover:text-red-400"
+                                            className="h-9 w-9 p-0 rounded-lg hover:bg-red-500/10 hover:text-red-400 transition-colors"
                                             onClick={(e) => {
                                                 if (rutina.id) handleDelete(rutina.id, e);
                                             }}

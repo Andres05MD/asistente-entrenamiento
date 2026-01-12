@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FaFire, FaCalendarCheck, FaDumbbell, FaPlus, FaWeight, FaArrowRight, FaTrophy, FaRuler, FaMagic } from "react-icons/fa";
+import { FaFire, FaCalendarCheck, FaDumbbell, FaPlus, FaWeight, FaArrowRight, FaTrophy, FaRuler, FaMagic, FaCheckCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useUser, useAvances, useRutinas } from "@/hooks/useData";
@@ -74,33 +74,59 @@ export default function DashboardPage() {
     // Find latest routine
     const latestRoutine = rutinas?.[0];
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { y: 20, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: { type: "spring" as const, stiffness: 300, damping: 24 }
+        }
+    };
+
     return (
-        <div className="space-y-8 animate-in fade-in-50 duration-500">
+        <motion.div
+            className="space-y-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
-                        Hola, {user?.displayName?.split(' ')[0] || 'Atleta'}
+                    <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white via-white/90 to-white/50 bg-clip-text text-transparent">
+                        Hola, {user?.displayName?.split(' ')[0] || 'Atleta'} 👋
                     </h1>
-                    <p className="text-muted-foreground mt-1">
+                    <p className="text-muted-foreground mt-2 text-lg">
                         ¿Listo para superar tus límites hoy?
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground bg-white/5 border border-white/5 px-3 py-1.5 rounded-full">
-                        {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
-                    </span>
+                    <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-sm">
+                        <span className="text-sm font-medium text-zinc-300 capitalize">
+                            {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                        </span>
+                    </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Stats Grid */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {isLoading ? (
-                    Array.from({ length: 4 }).map((_, i) => ( // Increased skeleton count
-                        <div key={i} className="rounded-xl border border-white/5 bg-card/50 p-6 space-y-3">
+                    Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="rounded-2xl border border-white/5 bg-zinc-900/50 p-6 space-y-4">
                             <div className="flex justify-between items-center">
                                 <Skeleton className="h-4 w-[100px] bg-white/5" />
-                                <Skeleton className="h-8 w-8 rounded-lg bg-white/5" />
+                                <Skeleton className="h-10 w-10 rounded-xl bg-white/5" />
                             </div>
                             <div className="space-y-2">
                                 <Skeleton className="h-8 w-[60px] bg-white/5" />
@@ -112,24 +138,24 @@ export default function DashboardPage() {
                     stats.map((stat, index) => (
                         <motion.div
                             key={stat.title}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
                         >
-                            <Card className="bg-card/50 backdrop-blur-sm border-white/5 hover:border-primary/20 transition-all duration-300">
+                            <Card className="rounded-2xl bg-gradient-to-br from-zinc-900/90 to-zinc-900/50 backdrop-blur-xl border-white/5 shadow-lg group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                                <div className={`absolute top-0 right-0 p-8 ${stat.color} opacity-5 blur-2xl group-hover:opacity-10 transition-opacity`} />
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                                    <CardTitle className="text-sm font-medium text-zinc-400 group-hover:text-zinc-300 transition-colors">
                                         {stat.title}
                                     </CardTitle>
-                                    <div className={`p-2 rounded-lg ${stat.bg}`}>
-                                        <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                                    <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.color} bg-opacity-10 shadow-inner group-hover:scale-110 transition-transform duration-300`}>
+                                        <stat.icon className="h-5 w-5" />
                                     </div>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">
+                                    <div className="text-3xl font-bold text-white tracking-tight">
                                         {stat.value}
                                     </div>
-                                    <p className="text-xs text-muted-foreground mt-1">
+                                    <p className="text-xs text-muted-foreground mt-1 font-medium">
                                         {stat.description}
                                     </p>
                                 </CardContent>
@@ -137,90 +163,111 @@ export default function DashboardPage() {
                         </motion.div>
                     ))
                 )}
-            </div>
+            </motion.div>
 
             {/* Quick Actions */}
-            <div>
-                <h2 className="text-lg font-semibold text-white mb-4">Accesos Rápidos</h2>
+            <motion.div variants={itemVariants}>
+                <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <FaMagic className="text-purple-500 w-5 h-5" /> Accesos Rápidos
+                </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <Button
                         variant="outline"
-                        className="h-auto py-6 flex flex-col gap-2 bg-white/5 border-white/10 hover:bg-primary/20 hover:text-primary hover:border-primary/50 transition-all"
+                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-zinc-900/50 border-white/5 hover:bg-zinc-800/80 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 group"
                         onClick={() => router.push("/dashboard/avances")}
                     >
-                        <FaWeight className="text-xl mb-1" />
-                        <span>Registrar Peso</span>
+                        <div className="p-3 rounded-full bg-emerald-500/10 text-emerald-500 group-hover:scale-110 transition-transform">
+                            <FaWeight className="text-2xl" />
+                        </div>
+                        <span className="font-medium text-zinc-300 group-hover:text-white">Registrar Peso</span>
                     </Button>
                     <Button
                         variant="outline"
-                        className="h-auto py-6 flex flex-col gap-2 bg-white/5 border-white/10 hover:bg-primary/20 hover:text-primary hover:border-primary/50 transition-all"
+                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-zinc-900/50 border-white/5 hover:bg-zinc-800/80 hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 group"
                         onClick={() => router.push("/dashboard/avances")}
                     >
-                        <FaRuler className="text-xl mb-1" />
-                        <span>Mis Medidas</span>
+                        <div className="p-3 rounded-full bg-blue-500/10 text-blue-500 group-hover:scale-110 transition-transform">
+                            <FaRuler className="text-2xl" />
+                        </div>
+                        <span className="font-medium text-zinc-300 group-hover:text-white">Registrar Medidas</span>
                     </Button>
                     <Button
                         variant="outline"
-                        className="h-auto py-6 flex flex-col gap-2 bg-white/5 border-white/10 hover:bg-primary/20 hover:text-primary hover:border-primary/50 transition-all"
+                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-zinc-900/50 border-white/5 hover:bg-zinc-800/80 hover:border-orange-500/30 hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-300 group"
                         onClick={() => router.push("/dashboard/rutinas")}
                     >
-                        <FaPlus className="text-xl mb-1" />
-                        <span>Nueva Rutina</span>
+                        <div className="p-3 rounded-full bg-orange-500/10 text-orange-500 group-hover:scale-110 transition-transform">
+                            <FaPlus className="text-2xl" />
+                        </div>
+                        <span className="font-medium text-zinc-300 group-hover:text-white">Nueva Rutina</span>
                     </Button>
                     <Button
-                        variant="outline"
-                        className="h-auto py-6 flex flex-col gap-2 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-white/10 hover:from-purple-500/20 hover:to-blue-500/20 hover:border-purple-500/50 transition-all"
+                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-gradient-to-br from-purple-600/20 to-indigo-600/20 border border-purple-500/30 hover:from-purple-600/30 hover:to-indigo-600/30 hover:border-purple-500/60 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 group relative overflow-hidden"
                         onClick={() => router.push("/dashboard/rutinas")}
                     >
-                        <FaMagic className="text-xl mb-1 text-purple-400" />
-                        <span>Generar con IA</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer" />
+                        <div className="p-3 rounded-full bg-purple-500/20 text-purple-300 group-hover:scale-110 transition-transform shadow-inner shadow-purple-500/20">
+                            <FaMagic className="text-2xl" />
+                        </div>
+                        <span className="font-bold text-purple-100 group-hover:text-white">Generar con IA</span>
                     </Button>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Main Content Area */}
-            <div className="grid gap-4 md:grid-cols-7">
+            <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-7">
                 {/* Quick Start / Next Workout */}
-                <Card className="col-span-12 md:col-span-7 lg:col-span-4 bg-gradient-to-br from-zinc-900 to-black border-white/10 overflow-hidden relative group">
-                    <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none">
-                        <FaDumbbell className="w-48 h-48 text-white rotate-12" />
+                <Card className="col-span-12 md:col-span-7 lg:col-span-4 bg-gradient-to-br from-zinc-900 to-black border-white/10 overflow-hidden relative group rounded-3xl shadow-2xl">
+                    <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-700 pointer-events-none transform rotate-12 scale-150">
+                        <FaDumbbell className="w-64 h-64 text-white" />
                     </div>
-                    <CardHeader>
-                        <CardTitle className="text-white">Entrenamiento Rápido</CardTitle>
+                    <div className="absolute bottom-0 left-0 w-full h-full bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+
+                    <CardHeader className="relative z-10 pb-2">
+                        <CardTitle className="text-2xl text-white flex items-center gap-2">
+                            <span className="w-2 h-8 bg-green-500 rounded-full mr-2" />
+                            Siguiente Sesión
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="relative z-10">
                         {isLoading ? (
                             <div className="space-y-4">
-                                <Skeleton className="h-[120px] w-full rounded-xl bg-white/5" />
+                                <Skeleton className="h-[140px] w-full rounded-2xl bg-white/5" />
                             </div>
                         ) : latestRoutine ? (
-                            <div className="space-y-4 relative z-10">
-                                <div className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <span className="font-bold text-lg text-primary">{latestRoutine.routineName}</span>
-                                        <AnimatedBadge variant="default" className="shrink-0">
-                                            {latestRoutine.days?.length || 0} Días
+                            <div className="space-y-6">
+                                <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-md shadow-inner">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="font-bold text-2xl text-green-400">{latestRoutine.routineName}</span>
+                                        <AnimatedBadge variant="default" className="shrink-0 bg-green-500/20 text-green-300 border-green-500/30">
+                                            {latestRoutine.days?.length || 0} Días / Semana
                                         </AnimatedBadge>
                                     </div>
-                                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                                        {latestRoutine.description || "Tu rutina personalizada."}
+                                    <p className="text-base text-zinc-400 line-clamp-2 leading-relaxed">
+                                        {latestRoutine.description || "Tu plan de entrenamiento personalizado para alcanzar tus metas."}
                                     </p>
-                                    <Button
-                                        onClick={() => router.push(`/dashboard/rutinas/${latestRoutine.id}`)}
-                                        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold shadow-lg shadow-green-900/20"
-                                    >
-                                        Ir a Entrenar <FaArrowRight className="ml-2" />
-                                    </Button>
                                 </div>
+                                <Button
+                                    onClick={() => router.push(`/dashboard/rutinas/${latestRoutine.id}`)}
+                                    className="w-full h-14 text-lg bg-green-500 hover:bg-green-400 text-black font-bold rounded-xl shadow-lg shadow-green-500/20 hover:shadow-green-500/40 hover:-translate-y-0.5 transition-all duration-300"
+                                >
+                                    ¡Comenzar Entrenamiento! <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                </Button>
                             </div>
                         ) : (
-                            <div className="text-center py-8 space-y-4 relative z-10">
-                                <p className="text-muted-foreground">No tienes rutinas activas.</p>
+                            <div className="text-center py-12 space-y-6">
+                                <div className="p-4 bg-zinc-800/50 rounded-full w-20 h-20 mx-auto flex items-center justify-center">
+                                    <FaDumbbell className="text-4xl text-zinc-600" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white mb-2">No tienes una rutina activa</h3>
+                                    <p className="text-zinc-400 max-w-[300px] mx-auto">Crea una nueva rutina manualmente o deja que la IA diseñe el plan perfecto para ti.</p>
+                                </div>
                                 <Button
                                     onClick={() => router.push("/dashboard/rutinas")}
-                                    variant="secondary"
+                                    className="bg-white text-black hover:bg-zinc-200 font-bold px-8 rounded-full"
                                 >
-                                    Crear Rutina con IA
+                                    Crear Rutina
                                 </Button>
                             </div>
                         )}
@@ -228,48 +275,60 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Progress Mini-Summary */}
-                <Card className="col-span-12 md:col-span-7 lg:col-span-3 bg-card/50 backdrop-blur-sm border-white/5">
-                    <CardHeader>
-                        <CardTitle>Historial Reciente</CardTitle>
+                <Card className="col-span-12 md:col-span-7 lg:col-span-3 bg-zinc-900/40 backdrop-blur-xl border-white/5 rounded-3xl overflow-hidden shadow-lg h-full">
+                    <CardHeader className="border-b border-white/5 pb-4">
+                        <CardTitle className="flex items-center gap-2">
+                            <FaCalendarCheck className="text-zinc-400" /> Historial Reciente
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="pt-6">
                         <div className="space-y-4">
                             {isLoading ? (
                                 Array.from({ length: 3 }).map((_, i) => (
-                                    <Skeleton key={i} className="h-16 w-full rounded-lg bg-white/5" />
+                                    <Skeleton key={i} className="h-20 w-full rounded-xl bg-white/5" />
                                 ))
                             ) : workoutLogs && workoutLogs.length > 0 ? (
-                                workoutLogs.slice(0, 3).map((log, i) => (
-                                    <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                        <div>
-                                            <p className="font-medium text-white">{log.routineName || "Entrenamiento Libre"}</p>
-                                            <p className="text-xs text-muted-foreground">
-                                                {new Date(log.date).toLocaleDateString()}
-                                            </p>
+                                <div className="space-y-3">
+                                    {workoutLogs.slice(0, 4).map((log, i) => (
+                                        <div key={i} className="group flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-white/10 transition-all duration-300 cursor-default">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                                    <FaCheckCircle className="w-4 h-4" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold text-zinc-200 group-hover:text-white transition-colors">{log.routineName || "Entrenamiento"}</p>
+                                                    <p className="text-xs text-zinc-500 font-mono">
+                                                        {new Date(log.date).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold text-zinc-400 bg-zinc-900 border border-white/5 group-hover:border-primary/20 group-hover:text-primary transition-colors">
+                                                    {(log.totalVolume || 0).toLocaleString()} kg
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="text-right">
-                                            <span className="text-xs font-mono text-primary bg-primary/10 px-2 py-1 rounded">
-                                                {(log.totalVolume || 0).toLocaleString()} kg
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))
+                                    ))}
+                                </div>
                             ) : (
-                                <p className="text-sm text-muted-foreground text-center py-4">
-                                    Sin historial reciente.
-                                </p>
+                                <div className="flex flex-col items-center justify-center h-[200px] text-zinc-500">
+                                    <FaCalendarCheck className="text-4xl mb-3 opacity-20" />
+                                    <p className="text-sm">Sin historial reciente.</p>
+                                </div>
                             )}
-                            <Button
-                                variant="ghost"
-                                className="w-full text-xs text-muted-foreground hover:text-white"
-                                onClick={() => router.push("/dashboard/avances")}
-                            >
-                                Ver todo el historial
-                            </Button>
+                            {(workoutLogs && workoutLogs.length > 0) && (
+                                <Button
+                                    variant="ghost"
+                                    className="w-full text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/5 mt-2"
+                                    onClick={() => router.push("/dashboard/avances")}
+                                >
+                                    Ver todo el historial <FaArrowRight className="ml-2 w-3 h-3" />
+                                </Button>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
-            </div>
-        </div >
+            </motion.div>
+        </motion.div>
     );
 }

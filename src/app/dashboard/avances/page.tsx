@@ -641,9 +641,11 @@ export default function AvancesPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 }}
                 >
-                    <Card className="bg-card/50 backdrop-blur-xl border-white/5 h-full">
+                    <Card className="bg-gradient-to-br from-zinc-900/90 to-zinc-900/50 backdrop-blur-xl border-white/5 h-full hover:border-white/10 transition-colors shadow-xl">
                         <CardHeader>
-                            <CardTitle>Actividad Semanal</CardTitle>
+                            <CardTitle className="flex items-center gap-2">
+                                <FaCalendarCheck className="text-blue-500" /> Actividad Semanal
+                            </CardTitle>
                             <CardDescription>Sesiones de entrenamiento esta semana</CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -653,28 +655,38 @@ export default function AvancesPage() {
                                 ) : weeklyData && weeklyData.length > 0 ? (
                                     <ResponsiveContainer width="100%" height={300}>
                                         <BarChart data={weeklyData}>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                                            <defs>
+                                                <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.8} />
+                                                    <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.3} />
+                                                </linearGradient>
+                                            </defs>
+                                            <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.05)" vertical={false} />
                                             <XAxis
                                                 dataKey="name"
-                                                stroke="#888"
+                                                stroke="rgba(255,255,255,0.4)"
                                                 fontSize={12}
                                                 tickLine={false}
                                                 axisLine={false}
+                                                dy={10}
                                             />
                                             <YAxis
-                                                stroke="#888"
+                                                stroke="rgba(255,255,255,0.4)"
                                                 fontSize={12}
                                                 tickLine={false}
                                                 axisLine={false}
-                                                tickFormatter={(value) => `${value} `}
+                                                tickFormatter={(value) => `${value}`}
                                             />
-                                            <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                                            <RechartsTooltip
+                                                content={<CustomTooltip />}
+                                                cursor={{ fill: 'rgba(255,255,255,0.02)' }}
+                                            />
                                             <Bar
                                                 dataKey="workouts"
-                                                fill="currentColor"
-                                                radius={[4, 4, 0, 0]}
-                                                className="fill-primary"
+                                                fill="url(#colorBar)"
+                                                radius={[6, 6, 0, 0]}
                                                 maxBarSize={50}
+                                                animationDuration={1500}
                                             />
                                         </BarChart>
                                     </ResponsiveContainer>
@@ -694,9 +706,11 @@ export default function AvancesPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 }}
                 >
-                    <Card className="bg-card/50 backdrop-blur-xl border-white/5 h-full">
+                    <Card className="bg-gradient-to-br from-zinc-900/90 to-zinc-900/50 backdrop-blur-xl border-white/5 h-full hover:border-white/10 transition-colors shadow-xl">
                         <CardHeader>
-                            <CardTitle>Volumen de Carga</CardTitle>
+                            <CardTitle className="flex items-center gap-2">
+                                <FaChartLine className="text-purple-500" /> Volumen de Carga
+                            </CardTitle>
                             <CardDescription>Progreso histórico (kg)</CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -708,33 +722,35 @@ export default function AvancesPage() {
                                         <AreaChart data={volumeData}>
                                             <defs>
                                                 <linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                                                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
                                                     <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
                                                 </linearGradient>
                                             </defs>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                                            <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.05)" vertical={false} />
                                             <XAxis
                                                 dataKey="name"
-                                                stroke="#888"
+                                                stroke="rgba(255,255,255,0.4)"
                                                 fontSize={12}
                                                 tickLine={false}
                                                 axisLine={false}
+                                                dy={10}
                                             />
                                             <YAxis
-                                                stroke="#888"
+                                                stroke="rgba(255,255,255,0.4)"
                                                 fontSize={12}
                                                 tickLine={false}
                                                 axisLine={false}
-                                                tickFormatter={(value) => `${(value / 1000).toFixed(0)} k`}
+                                                tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                                             />
                                             <RechartsTooltip content={<CustomTooltip />} />
                                             <Area
                                                 type="monotone"
                                                 dataKey="volume"
                                                 stroke="#8b5cf6"
-                                                strokeWidth={2}
+                                                strokeWidth={3}
                                                 fillOpacity={1}
                                                 fill="url(#colorVolume)"
+                                                animationDuration={1500}
                                             />
                                         </AreaChart>
                                     </ResponsiveContainer>
@@ -755,9 +771,11 @@ export default function AvancesPage() {
                     transition={{ delay: 0.6 }}
                     className="lg:col-span-2"
                 >
-                    <Card className="bg-card/50 backdrop-blur-xl border-white/5">
+                    <Card className="bg-gradient-to-br from-zinc-900/90 to-zinc-900/50 backdrop-blur-xl border-white/5 hover:border-white/10 transition-colors shadow-xl">
                         <CardHeader>
-                            <CardTitle>Peso Corporal</CardTitle>
+                            <CardTitle className="flex items-center gap-2">
+                                <FaWeight className="text-emerald-500" /> Peso Corporal
+                            </CardTitle>
                             <CardDescription>Seguimiento de tu peso (kg)</CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -769,21 +787,22 @@ export default function AvancesPage() {
                                         <AreaChart data={weightData}>
                                             <defs>
                                                 <linearGradient id="colorWeight" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
                                                     <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                                                 </linearGradient>
                                             </defs>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                                            <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.05)" vertical={false} />
                                             <XAxis
                                                 dataKey="name"
-                                                stroke="#888"
+                                                stroke="rgba(255,255,255,0.4)"
                                                 fontSize={12}
                                                 tickLine={false}
                                                 axisLine={false}
+                                                dy={10}
                                             />
                                             <YAxis
                                                 domain={['dataMin - 1', 'dataMax + 1']}
-                                                stroke="#888"
+                                                stroke="rgba(255,255,255,0.4)"
                                                 fontSize={12}
                                                 tickLine={false}
                                                 axisLine={false}
@@ -793,9 +812,10 @@ export default function AvancesPage() {
                                                 type="monotone"
                                                 dataKey="weight"
                                                 stroke="#10b981"
-                                                strokeWidth={2}
+                                                strokeWidth={3}
                                                 fillOpacity={1}
                                                 fill="url(#colorWeight)"
+                                                animationDuration={1500}
                                             />
                                         </AreaChart>
                                     </ResponsiveContainer>
