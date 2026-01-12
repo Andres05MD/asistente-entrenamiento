@@ -66,14 +66,16 @@ export default function PerfilPage() {
     });
 
     useEffect(() => {
-        if (user || profile) {
-            form.setValue("name", profile?.displayName || user?.displayName || "");
-            if (profile?.age) form.setValue("age", profile.age);
-            if (profile?.level) form.setValue("level", profile.level);
-            if (profile?.goal) form.setValue("goal", profile.goal);
-            if (profile?.days) form.setValue("days", profile.days);
-            if (profile?.equipment) form.setValue("equipment", profile.equipment);
-            if (profile?.gender) form.setValue("gender", profile.gender);
+        if (profile) {
+            form.reset({
+                name: profile.displayName || user?.displayName || "",
+                age: profile.age,
+                level: profile.level || "Principiante",
+                goal: profile.goal || "Hipertrofia",
+                days: profile.days || 4,
+                equipment: profile.equipment || "Gimnasio Comercial",
+                gender: profile.gender || "Hombre",
+            });
         }
     }, [user, profile, form]);
 
@@ -85,17 +87,20 @@ export default function PerfilPage() {
                 await updateProfile(user, { displayName: values.name });
             }
 
-            const userRef = doc(db, "users", user.uid);
-            await setDoc(userRef, {
+            // Clean undefined values to avoid Firestore errors
+            const profileData = {
                 name: values.name,
-                age: values.age,
-                level: values.level,
-                goal: values.goal,
-                days: values.days,
-                equipment: values.equipment,
-                gender: values.gender,
+                age: values.age || null,
+                level: values.level || "Principiante",
+                goal: values.goal || "Hipertrofia",
+                days: values.days || 4,
+                equipment: values.equipment || "Gimnasio Comercial",
+                gender: values.gender || "Hombre",
                 email: user.email
-            }, { merge: true });
+            };
+
+            const userRef = doc(db, "users", user.uid);
+            await setDoc(userRef, profileData, { merge: true });
 
             toast.success("Perfil actualizado correctamente");
         } catch (error) {
@@ -383,7 +388,7 @@ export default function PerfilPage() {
                                                                 <SelectValue placeholder="Selecciona..." />
                                                             </SelectTrigger>
                                                         </FormControl>
-                                                        <SelectContent>
+                                                        <SelectContent className="bg-zinc-900 border-white/10">
                                                             <SelectItem value="Principiante">Principiante</SelectItem>
                                                             <SelectItem value="Intermedio">Intermedio</SelectItem>
                                                             <SelectItem value="Avanzado">Avanzado</SelectItem>
@@ -406,7 +411,7 @@ export default function PerfilPage() {
                                                                 <SelectValue placeholder="Selecciona..." />
                                                             </SelectTrigger>
                                                         </FormControl>
-                                                        <SelectContent>
+                                                        <SelectContent className="bg-zinc-900 border-white/10">
                                                             <SelectItem value="Hipertrofia">Hipertrofia (Ganar Músculo)</SelectItem>
                                                             <SelectItem value="Fuerza">Fuerza Máxima</SelectItem>
                                                             <SelectItem value="Perdida de Peso">Pérdida de Peso</SelectItem>
@@ -476,7 +481,7 @@ export default function PerfilPage() {
                                                                 <SelectValue placeholder="Selecciona..." />
                                                             </SelectTrigger>
                                                         </FormControl>
-                                                        <SelectContent>
+                                                        <SelectContent className="bg-zinc-900 border-white/10">
                                                             <SelectItem value="Hombre">Hombre</SelectItem>
                                                             <SelectItem value="Mujer">Mujer</SelectItem>
                                                             <SelectItem value="Otro">Otro</SelectItem>
