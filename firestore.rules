@@ -14,13 +14,14 @@ service cloud.firestore {
     }
 
     // Helper: Check ownership based on 'userId' field in the document
-    // Handles Create (check new data) and Read/Update/Delete (check existing data)
+    // Ensures:
+    // 1. User is authenticated.
+    // 2. If modifying existing data, user must own it.
+    // 3. If writing new data (create/update), 'userId' field must match their UID.
     function isResourceOwner() {
-      return isAuthenticated() && (
-        resource == null 
-          ? request.resource.data.userId == request.auth.uid 
-          : resource.data.userId == request.auth.uid
-      );
+      return isAuthenticated() && 
+             (resource == null || resource.data.userId == request.auth.uid) &&
+             (request.resource == null || request.resource.data.userId == request.auth.uid);
     }
 
     // --- Collections ---
@@ -36,8 +37,6 @@ service cloud.firestore {
     }
 
     // Ejercicios
-    // Note: If you plan to have "Public" exercises (system defaults) later,
-    // you might need: OR resource.data.isPublic == true (for read only)
     match /ejercicios/{ejercicioId} {
       allow read, write: if isResourceOwner();
     }
