@@ -72,8 +72,11 @@ export default function PerfilPage() {
             const validEquipment = ["Gimnasio Comercial", "Mancuernas", "Peso Corporal", "Home Gym"];
             const validGenders = ["Hombre", "Mujer", "Otro"];
 
+            // Prioritize name from Firestore (saved as 'name') over Auth displayName
+            const savedName = (profile as any).name || profile.displayName || user?.displayName || "";
+
             form.reset({
-                name: profile.displayName || user?.displayName || "",
+                name: savedName,
                 age: profile.age,
                 level: validLevels.includes(profile.level || "") ? profile.level : "Principiante",
                 goal: validGoals.includes(profile.goal || "") ? profile.goal : "Hipertrofia",
