@@ -28,11 +28,12 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FaUser, FaSave, FaEnvelope, FaShieldAlt, FaDumbbell, FaTrophy, FaBolt, FaCheckCircle, FaCrown } from "react-icons/fa";
+import { FaUser, FaSave, FaEnvelope, FaShieldAlt, FaDumbbell, FaTrophy, FaBolt, FaCheckCircle, FaCrown, FaStar } from "react-icons/fa";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import CircularProgress from "@/components/ui/circular-progress";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAvances } from "@/hooks/useData";
+import { useGamification } from "@/hooks/useGamification";
 import { useEffect, useState } from "react";
 
 const profileSchema = z.object({
@@ -48,6 +49,7 @@ const profileSchema = z.object({
 export default function PerfilPage() {
     const { user, profile, loading } = useUser();
     const { workoutLogs } = useAvances();
+    const { currentLevel, progress, currentXP, xpToNextLevel } = useGamification();
     const [saving, setSaving] = useState(false);
 
     const form = useForm<z.infer<typeof profileSchema>>({
@@ -163,14 +165,14 @@ export default function PerfilPage() {
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="glass-card hover:border-green-500/20 transition-all group">
+                <Card className="glass-card hover:border-green-500/20 transition-all group border-green-500/30 bg-green-900/10">
                     <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-xs text-muted-foreground mb-1">Nivel</p>
-                                <p className="text-lg font-semibold text-white">{profile?.level || "Sin definir"}</p>
+                                <p className="text-xs text-green-400 mb-1 font-bold flex items-center gap-1"><FaStar className="text-[10px]" /> Nivel de Atleta</p>
+                                <p className="text-2xl font-bold text-white">Lvl {currentLevel}</p>
                             </div>
-                            <div className="p-3 rounded-lg bg-green-500/10 group-hover:bg-green-500/20 transition-colors">
+                            <div className="p-3 rounded-lg bg-green-500/20 group-hover:bg-green-500/30 transition-colors">
                                 <FaTrophy className="text-green-400 text-xl" />
                             </div>
                         </div>
@@ -254,6 +256,26 @@ export default function PerfilPage() {
                                     label="Perfil"
                                 />
                             </div>
+
+                            {/* XP Progress Bar */}
+                            <div className="w-full max-w-[200px] mx-auto space-y-2">
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span>Nivel {currentLevel}</span>
+                                    <span>{Math.floor(progress)}%</span>
+                                </div>
+                                <div className="h-2 bg-black/40 rounded-full overflow-hidden border border-white/5">
+                                    <motion.div
+                                        className="h-full bg-gradient-to-r from-green-400 to-emerald-600"
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${progress}%` }}
+                                        transition={{ duration: 1.5, ease: "easeOut" }}
+                                    />
+                                </div>
+                                <div className="text-[10px] text-center text-muted-foreground font-mono">
+                                    {Math.floor(currentXP)} / {Math.floor(xpToNextLevel)} XP
+                                </div>
+                            </div>
+
                             <div className="space-y-2 text-center">
                                 <div className="text-xs text-muted-foreground uppercase tracking-widest">
                                     Miembro desde
