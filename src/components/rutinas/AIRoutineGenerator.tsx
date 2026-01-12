@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { FaMagic, FaSpinner } from "react-icons/fa";
@@ -189,9 +190,9 @@ export default function AIRoutineGenerator({ onRoutineGenerated }: { onRoutineGe
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="gradient-ai-routine hover:gradient-ai-routine-hover text-white shadow-lg shadow-purple-500/25">
+                <PremiumButton className="gradient-ai-routine hover:gradient-ai-routine-hover text-white shadow-lg shadow-purple-500/25">
                     <FaMagic className="mr-2" /> Generar con IA
-                </Button>
+                </PremiumButton>
             </DialogTrigger>
             <DialogContent className="glass-dialog w-full max-w-2xl md:max-w-4xl lg:max-w-5xl h-[85vh] flex flex-col p-6">
                 <DialogHeader className="shrink-0">
@@ -267,10 +268,10 @@ export default function AIRoutineGenerator({ onRoutineGenerated }: { onRoutineGe
                             <p className="text-xs text-muted-foreground">La IA te sugerirá la mejor alternativa biomecánica.</p>
                         </div>
                         <DialogFooter>
-                            <Button variant="ghost" onClick={() => setSwappingExercise(null)}>Cancelar</Button>
-                            <Button onClick={handleSwapExercise} disabled={isSwapping} className="bg-primary">
+                            <PremiumButton variant="ghost" onClick={() => setSwappingExercise(null)}>Cancelar</PremiumButton>
+                            <PremiumButton onClick={handleSwapExercise} disabled={isSwapping} className="bg-primary">
                                 {isSwapping ? <FaSpinner className="animate-spin" /> : "Buscar Reemplazo"}
-                            </Button>
+                            </PremiumButton>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>

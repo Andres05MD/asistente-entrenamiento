@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { signOut } from "firebase/auth";
 import { useGamification } from "@/hooks/useGamification";
 import { useAuth } from "@/context/AuthContext";
@@ -117,14 +118,14 @@ export default function Sidebar() {
                     </div>
                 </div>
 
-                <Button
+                <PremiumButton
                     variant="ghost"
                     className="w-full justify-start gap-3 text-muted-foreground hover:text-red-400 hover:bg-red-500/10"
                     onClick={handleLogout}
                 >
                     <FaSignOutAlt />
                     Cerrar Sesión
-                </Button>
+                </PremiumButton>
             </div>
         </aside>
     );

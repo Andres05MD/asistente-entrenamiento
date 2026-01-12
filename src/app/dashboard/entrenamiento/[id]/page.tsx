@@ -6,6 +6,7 @@ import { useRutinas, useAvances } from "@/hooks/useData";
 import { useEntrenamiento } from "@/hooks/useEntrenamiento";
 import { useGamification } from "@/hooks/useGamification";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -605,14 +606,14 @@ export default function ActiveTrainingPage() {
 
             {/* Finish Button Fixed Bottom */}
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/95 to-transparent z-20 md:relative md:bg-none md:p-0">
-                <Button
+                <PremiumButton
                     size="lg"
                     className="w-full bg-green-500 hover:bg-green-600 text-white font-bold h-14 shadow-green-900/20 shadow-lg text-lg"
                     onClick={finishWorkout}
                     disabled={saveWorkoutLog.isPending}
                 >
                     {saveWorkoutLog.isPending ? "Guardando..." : <><FaSave className="mr-2" /> Completar Entrenamiento</>}
-                </Button>
+                </PremiumButton>
             </div>
         </motion.div>
     );

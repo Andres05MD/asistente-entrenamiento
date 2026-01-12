@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import toast from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -121,7 +122,7 @@ export default function LoginPage() {
                                                             {...field}
                                                             className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-primary/50 focus:ring-primary/20 transition-all pr-10"
                                                         />
-                                                        <Button
+                                                        <PremiumButton
                                                             type="button"
                                                             variant="ghost"
                                                             size="icon"
@@ -133,20 +134,22 @@ export default function LoginPage() {
                                                             ) : (
                                                                 <FaEye className="h-4 w-4" />
                                                             )}
-                                                        </Button>
+                                                        </PremiumButton>
                                                     </div>
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
-                                    <Button
+                                    <PremiumButton
                                         type="submit"
-                                        className="w-full bg-primary hover:bg-primary/90 text-white font-medium shadow-lg shadow-primary/25 transition-all"
+                                        variant="gradient"
+                                        glow
+                                        className="w-full font-medium shadow-lg shadow-primary/25 transition-all"
                                         disabled={loading}
                                     >
                                         {loading ? "Iniciando sesión..." : "Ingresar"}
-                                    </Button>
+                                    </PremiumButton>
                                 </form>
                             </Form>
                         </CardContent>

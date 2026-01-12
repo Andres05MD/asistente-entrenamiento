@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Routine, DayRoutine, Exercise } from "@/types";
 import { FaLink, FaExchangeAlt } from "react-icons/fa";
@@ -76,12 +77,12 @@ export function GeneratedRoutinePreview({
             </div>
 
             <div className="pt-4 mt-auto border-t border-white/10 flex gap-2">
-                <Button variant="outline" onClick={onDiscard} className="flex-1">
+                <PremiumButton variant="outline" onClick={onDiscard} className="flex-1">
                     Descartar
-                </Button>
-                <Button onClick={onSave} className="flex-1 bg-green-600 hover:bg-green-700 text-white">
+                </PremiumButton>
+                <PremiumButton onClick={onSave} className="flex-1 bg-green-600 hover:bg-green-700 text-white">
                     Guardar Rutina
-                </Button>
+                </PremiumButton>
             </div>
         </div>
     );

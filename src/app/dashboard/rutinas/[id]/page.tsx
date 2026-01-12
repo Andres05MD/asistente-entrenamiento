@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -87,13 +88,13 @@ export default function RoutineDetailPage() {
             animate={{ opacity: 1 }}
             className="space-y-6"
         >
-            <Button
+            <PremiumButton
                 variant="ghost"
                 className="text-muted-foreground hover:text-white mb-4 pl-0 hover:bg-transparent transition-colors"
                 onClick={() => router.back()}
             >
                 <FaArrowLeft className="mr-2 h-4 w-4" /> Volver a mis rutinas
-            </Button>
+            </PremiumButton>
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/10 pb-6">
                 <div>
@@ -132,12 +133,12 @@ export default function RoutineDetailPage() {
                                         ))}
                                     </CardDescription>
                                 </div>
-                                <Button
+                                <PremiumButton
                                     className="bg-green-500 hover:bg-green-600 text-white font-bold shadow-lg shadow-green-900/20"
                                     onClick={() => router.push(`/dashboard/entrenamiento/${rutina.id}`)}
                                 >
                                     <FaClock className="mr-2" /> Iniciar Rutina
-                                </Button>
+                                </PremiumButton>
                             </CardHeader>
                             <CardContent className="space-y-0">
                                 <motion.div

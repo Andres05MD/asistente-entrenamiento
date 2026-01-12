@@ -10,6 +10,7 @@ import AnimatedCounter from "@/components/ui/animated-counter";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PremiumButton } from "@/components/ui/premium-button";
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -171,38 +172,40 @@ export default function DashboardPage() {
                     <FaMagic className="text-purple-500 w-5 h-5" /> Accesos Rápidos
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <Button
-                        variant="outline"
-                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-zinc-900/50 border-white/5 hover:bg-zinc-800/80 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 group"
+                    <PremiumButton
+                        variant="glass"
+                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-zinc-900/50 border-white/5 hover:bg-zinc-800/80 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 group justify-center text-center items-center"
                         onClick={() => router.push("/dashboard/avances")}
                     >
                         <div className="p-3 rounded-full bg-emerald-500/10 text-emerald-500 group-hover:scale-110 transition-transform">
                             <FaWeight className="text-2xl" />
                         </div>
                         <span className="font-medium text-zinc-300 group-hover:text-white">Registrar Peso</span>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-zinc-900/50 border-white/5 hover:bg-zinc-800/80 hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 group"
+                    </PremiumButton>
+                    <PremiumButton
+                        variant="glass"
+                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-zinc-900/50 border-white/5 hover:bg-zinc-800/80 hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 group justify-center text-center items-center"
                         onClick={() => router.push("/dashboard/avances")}
                     >
                         <div className="p-3 rounded-full bg-blue-500/10 text-blue-500 group-hover:scale-110 transition-transform">
                             <FaRuler className="text-2xl" />
                         </div>
                         <span className="font-medium text-zinc-300 group-hover:text-white">Registrar Medidas</span>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-zinc-900/50 border-white/5 hover:bg-zinc-800/80 hover:border-orange-500/30 hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-300 group"
+                    </PremiumButton>
+                    <PremiumButton
+                        variant="glass"
+                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-zinc-900/50 border-white/5 hover:bg-zinc-800/80 hover:border-orange-500/30 hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-300 group justify-center text-center items-center"
                         onClick={() => router.push("/dashboard/rutinas")}
                     >
                         <div className="p-3 rounded-full bg-orange-500/10 text-orange-500 group-hover:scale-110 transition-transform">
                             <FaPlus className="text-2xl" />
                         </div>
                         <span className="font-medium text-zinc-300 group-hover:text-white">Nueva Rutina</span>
-                    </Button>
-                    <Button
-                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-gradient-to-br from-purple-600/20 to-indigo-600/20 border border-purple-500/30 hover:from-purple-600/30 hover:to-indigo-600/30 hover:border-purple-500/60 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 group relative overflow-hidden"
+                    </PremiumButton>
+                    <PremiumButton
+                        variant="gradient"
+                        glow
+                        className="h-auto py-6 flex flex-col gap-3 rounded-2xl bg-gradient-to-br from-purple-600/20 to-indigo-600/20 border border-purple-500/30 hover:from-purple-600/30 hover:to-indigo-600/30 hover:border-purple-500/60 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 group relative overflow-hidden justify-center text-center items-center"
                         onClick={() => router.push("/dashboard/rutinas")}
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer" />
@@ -210,7 +213,7 @@ export default function DashboardPage() {
                             <FaMagic className="text-2xl" />
                         </div>
                         <span className="font-bold text-purple-100 group-hover:text-white">Generar con IA</span>
-                    </Button>
+                    </PremiumButton>
                 </div>
             </motion.div>
 
@@ -247,12 +250,12 @@ export default function DashboardPage() {
                                         {latestRoutine.description || "Tu plan de entrenamiento personalizado para alcanzar tus metas."}
                                     </p>
                                 </div>
-                                <Button
+                                <PremiumButton
                                     onClick={() => router.push(`/dashboard/rutinas/${latestRoutine.id}`)}
-                                    className="w-full h-14 text-lg bg-green-500 hover:bg-green-400 text-black font-bold rounded-xl shadow-lg shadow-green-500/20 hover:shadow-green-500/40 hover:-translate-y-0.5 transition-all duration-300"
+                                    className="w-full h-14 text-lg bg-green-500 hover:bg-green-400 text-black font-bold rounded-xl shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transition-all duration-300"
                                 >
                                     ¡Comenzar Entrenamiento! <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                                </Button>
+                                </PremiumButton>
                             </div>
                         ) : (
                             <div className="text-center py-12 space-y-6">
@@ -263,12 +266,12 @@ export default function DashboardPage() {
                                     <h3 className="text-xl font-bold text-white mb-2">No tienes una rutina activa</h3>
                                     <p className="text-zinc-400 max-w-[300px] mx-auto">Crea una nueva rutina manualmente o deja que la IA diseñe el plan perfecto para ti.</p>
                                 </div>
-                                <Button
+                                <PremiumButton
                                     onClick={() => router.push("/dashboard/rutinas")}
                                     className="bg-white text-black hover:bg-zinc-200 font-bold px-8 rounded-full"
                                 >
                                     Crear Rutina
-                                </Button>
+                                </PremiumButton>
                             </div>
                         )}
                     </CardContent>
@@ -317,13 +320,13 @@ export default function DashboardPage() {
                                 </div>
                             )}
                             {(workoutLogs && workoutLogs.length > 0) && (
-                                <Button
+                                <PremiumButton
                                     variant="ghost"
                                     className="w-full text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/5 mt-2"
                                     onClick={() => router.push("/dashboard/avances")}
                                 >
                                     Ver todo el historial <FaArrowRight className="ml-2 w-3 h-3" />
-                                </Button>
+                                </PremiumButton>
                             )}
                         </div>
                     </CardContent>

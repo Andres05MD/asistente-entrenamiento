@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { FaTrophy, FaFire, FaCalendarCheck, FaChartLine, FaWeight, FaRuler, FaDumbbell } from "react-icons/fa";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -220,9 +221,9 @@ export default function AvancesPage() {
                         <DialogTrigger asChild>
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-900/20">
+                                    <PremiumButton className="bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-900/20">
                                         <FaRuler className="mr-2" /> Registrar Medidas
-                                    </Button>
+                                    </PremiumButton>
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>Registra tus medidas corporales</p>
@@ -354,13 +355,13 @@ export default function AvancesPage() {
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button
+                                <PremiumButton
                                     onClick={handleSaveMeasurements}
                                     className="bg-blue-600 hover:bg-blue-700 text-white w-full"
                                     disabled={saveMeasurementsLog.isPending}
                                 >
                                     {saveMeasurementsLog.isPending ? "Guardando..." : "Guardar Medidas"}
-                                </Button>
+                                </PremiumButton>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
@@ -369,9 +370,9 @@ export default function AvancesPage() {
                         <DialogTrigger asChild>
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <Button className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-900/20">
+                                    <PremiumButton className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-900/20">
                                         <FaWeight className="mr-2" /> Registrar Peso
-                                    </Button>
+                                    </PremiumButton>
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>Registra tu peso corporal actual</p>
@@ -399,13 +400,13 @@ export default function AvancesPage() {
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button
+                                <PremiumButton
                                     onClick={handleSaveWeight}
                                     className="bg-emerald-500 hover:bg-emerald-600 text-white w-full"
                                     disabled={saveWeightLog.isPending}
                                 >
                                     {saveWeightLog.isPending ? "Guardando..." : "Guardar Registro"}
-                                </Button>
+                                </PremiumButton>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>

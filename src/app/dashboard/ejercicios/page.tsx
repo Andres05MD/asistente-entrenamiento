@@ -2,6 +2,7 @@
 
 import { useEjercicios, useUser } from "@/hooks/useData";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -68,9 +69,9 @@ export default function EjerciciosPage() {
 
                     <Dialog open={open} onOpenChange={setOpen}>
                         <DialogTrigger asChild>
-                            <Button className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
+                            <PremiumButton className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
                                 <FaPlus className="mr-2" /> Nuevo Manual
-                            </Button>
+                            </PremiumButton>
                         </DialogTrigger>
                         <DialogContent className="glass-dialog text-white">
                             <DialogHeader>
@@ -120,9 +121,9 @@ export default function EjerciciosPage() {
                                         className="bg-white/5 border-white/10 text-white"
                                     />
                                 </div>
-                                <Button onClick={handleCreate} className="w-full bg-primary mt-4" disabled={createEjercicio.isPending}>
+                                <PremiumButton onClick={handleCreate} className="w-full bg-primary mt-4" disabled={createEjercicio.isPending}>
                                     {createEjercicio.isPending ? "Guardando..." : "Guardar"}
-                                </Button>
+                                </PremiumButton>
                             </div>
                         </DialogContent>
                     </Dialog>
@@ -178,7 +179,7 @@ export default function EjerciciosPage() {
                                                 <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{ex.description}</p>
                                             )}
                                             <div className="flex justify-end pt-2">
-                                                <Button
+                                                <PremiumButton
                                                     size="icon"
                                                     variant="ghost"
                                                     className="hover:bg-red-500/20 hover:text-red-400 h-8 w-8 z-10"
@@ -188,7 +189,7 @@ export default function EjerciciosPage() {
                                                     }}
                                                 >
                                                     <FaTrash className="h-4 w-4" />
-                                                </Button>
+                                                </PremiumButton>
                                             </div>
                                         </CardContent>
                                     </Card>

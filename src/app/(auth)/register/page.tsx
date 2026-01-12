@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import toast from "react-hot-toast";
@@ -320,7 +321,7 @@ export default function RegisterPage() {
                                                                     {...field}
                                                                     className="bg-white/5 border-white/10 pr-10"
                                                                 />
-                                                                <Button
+                                                                <PremiumButton
                                                                     type="button"
                                                                     variant="ghost"
                                                                     size="icon"
@@ -328,7 +329,7 @@ export default function RegisterPage() {
                                                                     onClick={() => setShowPassword(!showPassword)}
                                                                 >
                                                                     {showPassword ? <FaEyeSlash className="h-4 w-4 text-muted-foreground" /> : <FaEye className="h-4 w-4 text-muted-foreground" />}
-                                                                </Button>
+                                                                </PremiumButton>
                                                             </div>
                                                         </FormControl>
                                                         <FormMessage />
@@ -349,7 +350,7 @@ export default function RegisterPage() {
                                                                     {...field}
                                                                     className="bg-white/5 border-white/10 pr-10"
                                                                 />
-                                                                <Button
+                                                                <PremiumButton
                                                                     type="button"
                                                                     variant="ghost"
                                                                     size="icon"
@@ -357,7 +358,7 @@ export default function RegisterPage() {
                                                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                                                 >
                                                                     {showConfirmPassword ? <FaEyeSlash className="h-4 w-4 text-muted-foreground" /> : <FaEye className="h-4 w-4 text-muted-foreground" />}
-                                                                </Button>
+                                                                </PremiumButton>
                                                             </div>
                                                         </FormControl>
                                                         <FormMessage />
@@ -367,13 +368,15 @@ export default function RegisterPage() {
                                         </div>
                                     </div>
 
-                                    <Button
+                                    <PremiumButton
                                         type="submit"
-                                        className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-6 text-lg shadow-lg shadow-primary/25 mt-4"
+                                        variant="gradient"
+                                        glow
+                                        className="w-full font-bold py-6 text-lg shadow-lg shadow-primary/25 mt-4"
                                         disabled={loading}
                                     >
                                         {loading ? "Creando tu perfil..." : "Comenzar Mi Transformación 🚀"}
-                                    </Button>
+                                    </PremiumButton>
                                 </form>
                             </Form>
                         </CardContent>

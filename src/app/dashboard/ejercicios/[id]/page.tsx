@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEjercicios, useAvances } from "@/hooks/useData";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Badge } from "@/components/ui/badge";
 import { FaArrowLeft, FaHistory, FaUtensilSpoon } from "react-icons/fa";
 import {
@@ -75,13 +76,13 @@ export default function ExerciseDetailPage() {
 
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
-            <Button
+            <PremiumButton
                 variant="ghost"
                 className="text-muted-foreground hover:text-white pl-0 mb-2"
                 onClick={() => router.back()}
             >
                 <FaArrowLeft className="mr-2" /> Volver a Biblioteca
-            </Button>
+            </PremiumButton>
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/10 pb-6">
                 <div>

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -122,20 +123,20 @@ export function RoutinePreferencesForm({
                             <Label className="text-white text-base font-semibold">Distribución de Entrenamiento</Label>
 
                             <div className="flex gap-4">
-                                <Button
+                                <PremiumButton
                                     variant={splitSelectionMode === 'auto' ? "default" : "outline"}
                                     onClick={() => setSplitSelectionMode('auto')}
                                     className="flex-1 border-white/20"
                                 >
                                     Automático (IA)
-                                </Button>
-                                <Button
+                                </PremiumButton>
+                                <PremiumButton
                                     variant={splitSelectionMode === 'manual' ? "default" : "outline"}
                                     onClick={() => setSplitSelectionMode('manual')}
                                     className="flex-1 border-white/20"
                                 >
                                     Manual (Diseñar Split)
-                                </Button>
+                                </PremiumButton>
                             </div>
 
                             {/* Manual Split Editor */}
@@ -167,17 +168,17 @@ export function RoutinePreferencesForm({
                                     ))}
 
                                     <div className="flex gap-2">
-                                        <Button variant="outline" size="sm" onClick={addDay} className="flex-1 border-dashed border-white/20 hover:border-primary/50 text-muted-foreground hover:text-primary">
+                                        <PremiumButton variant="outline" size="sm" onClick={addDay} className="flex-1 border-dashed border-white/20 hover:border-primary/50 text-muted-foreground hover:text-primary">
                                             <FaPlus className="mr-2" /> Agregar Día
-                                        </Button>
-                                        <Button
-                                            variant="secondary"
+                                        </PremiumButton>
+                                        <PremiumButton
+                                            variant="glass"
                                             size="sm"
                                             onClick={onAnalyzeSplit}
                                             className="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 border border-blue-500/30"
                                         >
                                             <FaCheckCircle className="mr-2" /> Analizar Distribución
-                                        </Button>
+                                        </PremiumButton>
                                     </div>
 
                                     {/* Analysis Feeback */}
@@ -306,17 +307,18 @@ export function RoutinePreferencesForm({
             </div>
 
             <div className="mt-4 pt-4 border-t border-white/10 shrink-0">
-                <Button
+                <PremiumButton
                     onClick={handleGenerate}
                     disabled={loading || (splitSelectionMode === 'manual' && generationType === 'week' ? false : !prompt)}
                     className="w-full bg-primary font-bold text-lg h-12"
+                    glow // Added glow for emphasis
                 >
                     {loading ? (
                         <><FaSpinner className="animate-spin mr-2" /> Analizando y Generando...</>
                     ) : (
                         "Generar Rutina Ahora"
                     )}
-                </Button>
+                </PremiumButton>
             </div>
         </div>
     );

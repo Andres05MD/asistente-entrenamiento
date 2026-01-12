@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaRobot, FaTimes, FaPaperPlane, FaCommentDots } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Input } from "@/components/ui/input";
 import { chatAdvisorAction } from "@/app/actions/chat-advisor";
 import ReactMarkdown from "react-markdown";
@@ -75,14 +76,14 @@ export default function AIChat() {
                                     </p>
                                 </div>
                             </div>
-                            <Button
+                            <PremiumButton
                                 variant="ghost"
                                 size="icon"
                                 className="h-8 w-8 hover:bg-white/10 rounded-full"
                                 onClick={() => setIsOpen(false)}
                             >
                                 <FaTimes />
-                            </Button>
+                            </PremiumButton>
                         </div>
 
                         {/* Messages */}
@@ -141,14 +142,14 @@ export default function AIChat() {
                                 className="bg-black/20 border-white/10 focus-visible:ring-primary/50"
                                 disabled={loading}
                             />
-                            <Button
+                            <PremiumButton
                                 type="submit"
                                 size="icon"
                                 className="bg-primary hover:bg-primary/90 shrink-0"
                                 disabled={loading || !input.trim()}
                             >
                                 <FaPaperPlane className="h-4 w-4" />
-                            </Button>
+                            </PremiumButton>
                         </form>
                     </motion.div>
                 )}

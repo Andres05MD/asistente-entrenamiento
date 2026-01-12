@@ -34,6 +34,7 @@ import CircularProgress from "@/components/ui/circular-progress";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAvances } from "@/hooks/useData";
 import { useGamification } from "@/hooks/useGamification";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { useEffect, useState } from "react";
 
 const profileSchema = z.object({
@@ -504,19 +505,22 @@ export default function PerfilPage() {
                             </Card>
 
                             <div className="flex justify-end sticky bottom-4 z-10">
-                                <Button
+                                <PremiumButton
                                     type="submit"
                                     disabled={saving}
-                                    className="bg-green-500 hover:bg-green-600 text-white font-bold shadow-lg shadow-green-900/20 px-8 py-6 text-lg rounded-full"
+                                    variant="gradient"
+                                    glow
+                                    size="lg"
+                                    className="rounded-full font-bold shadow-xl shadow-blue-900/20"
                                 >
                                     {saving ? (
                                         "Guardando..."
                                     ) : (
                                         <>
-                                            <FaSave className="mr-2" /> Guardar Todos los Cambios
+                                            <FaSave /> Guardar Todos los Cambios
                                         </>
                                     )}
-                                </Button>
+                                </PremiumButton>
                             </div>
                         </form>
                     </Form>
@@ -530,9 +534,13 @@ export default function PerfilPage() {
                             <CardDescription>Opciones de seguridad de tu cuenta</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Button variant="outline" className="w-full justify-start text-white border-white/10 hover:bg-white/5 hover:text-white" onClick={() => toast.success("Próximamente: Cambio de contraseña")}>
+                            <PremiumButton
+                                variant="glass"
+                                className="w-full justify-start text-white/90"
+                                onClick={(e) => { e.preventDefault(); toast.success("Próximamente: Cambio de contraseña"); }}
+                            >
                                 Cambiar Contraseña
-                            </Button>
+                            </PremiumButton>
                         </CardContent>
                     </Card>
                 </motion.div>

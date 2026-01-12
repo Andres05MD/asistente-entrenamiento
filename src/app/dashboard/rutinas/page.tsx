@@ -2,6 +2,7 @@
 
 import { useRutinas, useUser } from "@/hooks/useData";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import AIRoutineGenerator from "@/components/rutinas/AIRoutineGenerator";
@@ -127,7 +128,7 @@ export default function RutinasPage() {
                                         </div>
                                     </CardContent>
                                     <CardFooter className="flex justify-end gap-2 border-t border-white/5 pt-4 mt-auto bg-black/20">
-                                        <Button
+                                        <PremiumButton
                                             size="sm"
                                             variant="ghost"
                                             className="h-9 w-9 p-0 rounded-lg hover:bg-blue-500/10 hover:text-blue-400 transition-colors"
@@ -137,8 +138,8 @@ export default function RutinasPage() {
                                             }}
                                         >
                                             <FaEdit className="h-4 w-4" />
-                                        </Button>
-                                        <Button
+                                        </PremiumButton>
+                                        <PremiumButton
                                             size="sm"
                                             variant="ghost"
                                             className="h-9 w-9 p-0 rounded-lg hover:bg-red-500/10 hover:text-red-400 transition-colors"
@@ -147,7 +148,7 @@ export default function RutinasPage() {
                                             }}
                                         >
                                             <FaTrash className="h-4 w-4" />
-                                        </Button>
+                                        </PremiumButton>
                                     </CardFooter>
                                 </Card>
                             </Link>

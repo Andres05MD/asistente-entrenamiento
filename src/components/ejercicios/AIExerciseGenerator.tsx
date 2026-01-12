@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { PremiumButton } from "@/components/ui/premium-button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { FaMagic, FaSpinner, FaDumbbell } from "react-icons/fa";
@@ -53,9 +54,9 @@ export default function AIExerciseGenerator({ onExerciseGenerated }: { onExercis
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="gradient-ai-exercise hover:gradient-ai-exercise-hover text-white shadow-lg shadow-teal-500/20">
+                <PremiumButton className="gradient-ai-exercise hover:gradient-ai-exercise-hover text-white shadow-lg shadow-teal-500/20">
                     <FaMagic className="mr-2" /> Crear Ejercicio IA
-                </Button>
+                </PremiumButton>
             </DialogTrigger>
             <DialogContent className="max-w-xl bg-zinc-950/95 backdrop-blur-xl border-white/10 max-h-[85vh] flex flex-col">
                 <DialogHeader>
@@ -79,7 +80,7 @@ export default function AIExerciseGenerator({ onExerciseGenerated }: { onExercis
                                     className="bg-white/5 border-white/10 min-h-[100px]"
                                 />
                             </div>
-                            <Button
+                            <PremiumButton
                                 onClick={handleGenerate}
                                 disabled={loading || !prompt}
                                 className="w-full bg-emerald-600 hover:bg-emerald-700"
@@ -89,7 +90,7 @@ export default function AIExerciseGenerator({ onExerciseGenerated }: { onExercis
                                 ) : (
                                     "Generar Ejercicio"
                                 )}
-                            </Button>
+                            </PremiumButton>
                         </div>
                     ) : (
                         <div className="space-y-4">
@@ -124,12 +125,12 @@ export default function AIExerciseGenerator({ onExerciseGenerated }: { onExercis
                             </Card>
 
                             <div className="grid grid-cols-2 gap-3 pt-2">
-                                <Button variant="outline" onClick={() => setGeneratedExercise(null)}>
+                                <PremiumButton variant="outline" onClick={() => setGeneratedExercise(null)}>
                                     Descartar
-                                </Button>
-                                <Button onClick={handleSave} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                                </PremiumButton>
+                                <PremiumButton onClick={handleSave} className="bg-emerald-600 hover:bg-emerald-700 text-white">
                                     Guardar a mi Biblioteca
-                                </Button>
+                                </PremiumButton>
                             </div>
                         </div>
                     )}
