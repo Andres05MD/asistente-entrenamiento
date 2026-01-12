@@ -102,34 +102,79 @@ export default function AvancesPage() {
     const totalWorkouts = workoutLogs.length;
     const totalVolume = workoutLogs.reduce((acc: number, log: WorkoutLog) => acc + (log.totalVolume || 0), 0);
 
-    // Streaks logic (simplified)
-    const currentStreak = 0; // To be implemented properly with dates
+    // Calculate Real Streaks (Consecutive Days)
+    let currentStreak = 0;
+    const uniqueDates = Array.from(new Set(workoutLogs.map(log => new Date(log.date).toDateString())))
+        .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()); // Newest first
+
+    if (uniqueDates.length > 0) {
+        const todayStr = new Date().toDateString();
+        const yesterdayStr = new Date(Date.now() - 86400000).toDateString();
+        const lastWorkout = uniqueDates[0];
+
+        if (lastWorkout === todayStr || lastWorkout === yesterdayStr) {
+            currentStreak = 1;
+            for (let i = 0; i < uniqueDates.length - 1; i++) {
+                const curr = new Date(uniqueDates[i]);
+                const prev = new Date(uniqueDates[i + 1]);
+                const diffTime = Math.abs(curr.getTime() - prev.getTime());
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1) {
+                    currentStreak++;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
 
     // Workouts this month
-    const thisMonth = new Date().getMonth();
-    const workoutsThisMonth = workoutLogs.filter((log: WorkoutLog) => new Date(log.date).getMonth() === thisMonth).length;
+    const now = new Date();
+    const workoutsThisMonth = workoutLogs.filter((log: WorkoutLog) => {
+        const d = new Date(log.date);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }).length;
 
-    // Process Data for Charts
-    const weeklyData = [
-        { name: "Lun", workouts: 0 },
-        { name: "Mar", workouts: 0 },
-        { name: "Mié", workouts: 0 },
-        { name: "Jue", workouts: 0 },
-        { name: "Vie", workouts: 0 },
-        { name: "Sáb", workouts: 0 },
-        { name: "Dom", workouts: 0 },
-    ];
-    // Populate weekly data based on logs from current week (simplified logic for now)
+    // Weekly Data Processing (Current Week)
+    const getStartOfWeek = (date: Date) => {
+        const d = new Date(date);
+        const day = d.getDay() || 7; // Get current day number, converting Sun. to 7
+        if (day !== 1) d.setHours(-24 * (day - 1)); // Set to Monday past
+        return d;
+    };
 
-    const volumeData = workoutLogs.map((log: WorkoutLog) => ({
-        name: new Date(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
-        volume: log.totalVolume
-    }));
+    const startOfWeek = getStartOfWeek(new Date());
+    startOfWeek.setHours(0, 0, 0, 0);
 
-    const weightData = weightLogs.map((log: WeightLog) => ({
-        name: new Date(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
-        weight: log.weight
-    }));
+    const weeklyData = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((dayName, index) => {
+        const targetDate = new Date(startOfWeek);
+        targetDate.setDate(startOfWeek.getDate() + index);
+
+        const count = workoutLogs.filter(log => {
+            const d = new Date(log.date);
+            return d.getDate() === targetDate.getDate() &&
+                d.getMonth() === targetDate.getMonth() &&
+                d.getFullYear() === targetDate.getFullYear();
+        }).length;
+
+        return { name: dayName, workouts: count };
+    });
+
+    const volumeData = workoutLogs
+        .slice(0, 30) // Show last 30 workouts only for cleaner chart
+        .reverse()
+        .map((log: WorkoutLog) => ({
+            name: new Date(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+            volume: log.totalVolume
+        }));
+
+    const weightData = weightLogs
+        .slice(0, 30)
+        .map((log: WeightLog) => ({
+            name: new Date(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+            weight: log.weight
+        }));
 
     const stats = [
         {

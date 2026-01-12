@@ -90,6 +90,11 @@ export default function ExerciseDetailPage() {
                         <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
                             {exercise.muscleGroup}
                         </Badge>
+                        {exercise.grip && (
+                            <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20">
+                                {exercise.grip}
+                            </Badge>
+                        )}
                     </div>
                 </div>
             </div>

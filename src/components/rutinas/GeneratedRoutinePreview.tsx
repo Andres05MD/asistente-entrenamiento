@@ -52,6 +52,11 @@ export function GeneratedRoutinePreview({
                                                             {ex.muscleGroup}
                                                         </span>
                                                     )}
+                                                    {ex.grip && (
+                                                        <span className="text-[10px] text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded w-fit border border-orange-500/20">
+                                                            {ex.grip}
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <div className="text-xs text-muted-foreground mt-0.5 group-hover:text-primary transition-colors">
                                                     <FaExchangeAlt className="inline mr-1" /> Click para cambiar

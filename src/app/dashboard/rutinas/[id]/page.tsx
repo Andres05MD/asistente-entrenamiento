@@ -134,6 +134,11 @@ export default function RoutineDetailPage() {
                                                     {exercise.muscleGroup}
                                                 </Badge>
                                             )}
+                                            {exercise.grip && (
+                                                <Badge variant="outline" className="mt-1 ml-2 text-[10px] px-2 py-0 h-auto border-orange-500/30 text-orange-400 bg-orange-500/10">
+                                                    {exercise.grip}
+                                                </Badge>
+                                            )}
                                             {exercise.notes && (
                                                 <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
                                                     <FaStickyNote className="text-yellow-500/50" /> {exercise.notes}

@@ -37,11 +37,13 @@ export async function swapExerciseAction(
 
   Genera UN SOLO ejercicio de reemplazo que cumpla la misma función biomecánica o se ajuste mejor a la limitación/preferencia indicada.
   Si el ejercicio está en la biblioteca, usa su ID exacto.
+  IMPORTANTE: Especifica el tipo de agarre en el campo 'grip'.
 
   FORMATO DE RESPUESTA (JSON estricto):
   {
     "name": "Nombre del nuevo ejercicio",
     "exerciseId": "ID_SI_EXISTE_EN_BIBLIOTECA_O_NULL",
+    "grip": "Tipo de agarre (Ej: Supino)",
     "sets": "Series recomendadas (ej: 3-4)",
     "reps": "Rango repeticiones (ej: 10-15)",
     "rest": "Descanso (seg)",

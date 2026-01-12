@@ -3,6 +3,7 @@ export interface Exercise {
     name: string;
     muscleGroup?: string;
     videoUrl?: string;
+    grip?: string;
     description?: string;
     userId?: string;
     createdAt?: string;
@@ -48,6 +49,9 @@ export interface UserContext {
     intensity?: string;
     repRange?: string;
     specificFocus?: string;
+    // New Props
+    generationType?: 'week' | 'day';
+    customSplit?: { day: number, muscles: string[] }[];
 }
 
 export interface UserProfile {

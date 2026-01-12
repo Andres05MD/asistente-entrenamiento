@@ -13,8 +13,10 @@ import { Routine, Exercise, WorkoutLog } from "@/types";
 import { useUser, useAvances, useEjercicios } from "@/hooks/useData";
 import { RoutinePreferencesForm } from "./RoutinePreferencesForm";
 import { GeneratedRoutinePreview } from "./GeneratedRoutinePreview";
+import { evaluateSplitAction } from "@/app/actions/evaluate-split";
 
 export default function AIRoutineGenerator({ onRoutineGenerated }: { onRoutineGenerated: (routine: Routine) => void }) {
+    // ... (existing hooks)
     const { profile } = useUser();
     const { workoutLogs } = useAvances();
     const { ejercicios: availableExercises } = useEjercicios();
@@ -24,12 +26,20 @@ export default function AIRoutineGenerator({ onRoutineGenerated }: { onRoutineGe
     const [prompt, setPrompt] = useState("");
     const [generatedRoutine, setGeneratedRoutine] = useState<Routine | null>(null);
 
-    // Swap State
+    // Generation Config State
+    const [generationType, setGenerationType] = useState<"week" | "day">("week"); // New
+    const [splitSelectionMode, setSplitSelectionMode] = useState<"auto" | "manual">("auto"); // New
+    const [customSplit, setCustomSplit] = useState<{ day: number, muscles: string[] }[]>([
+        { day: 1, muscles: [] }
+    ]); // New
+    const [splitEvaluation, setSplitEvaluation] = useState<{ score: number, explanation: string } | null>(null); // New
+
+    // ... (existing swap state)
     const [swappingExercise, setSwappingExercise] = useState<{ dayIndex: number, exerciseIndex: number, exercise: Exercise } | null>(null);
     const [swapReason, setSwapReason] = useState("");
     const [isSwapping, setIsSwapping] = useState(false);
 
-    // Advanced Options
+    // ... (existing advanced options)
     const [splitType, setSplitType] = useState("auto");
     const [sessionDuration, setSessionDuration] = useState("45");
     const [intensity, setIntensity] = useState("moderate");
@@ -39,23 +49,54 @@ export default function AIRoutineGenerator({ onRoutineGenerated }: { onRoutineGe
 
     const getHistorySummary = () => {
         if (!workoutLogs || workoutLogs.length === 0) return "";
-        const recentLogs = workoutLogs.slice(-5);
+
+        // Ordenar por fecha descendente (más reciente primero) y tomar los últimos 7 días de entrenamiento efectivo
+        const recentLogs = [...workoutLogs]
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .slice(0, 7);
 
         return recentLogs.map((log: WorkoutLog) => {
-            const date = new Date(log.date).toLocaleDateString();
-            const volume = (log.totalVolume / 1000).toFixed(1) + "t";
-            return `- ${date}: ${log.exercisesCompleted} ejercicios (${volume})`;
+            const date = new Date(log.date).toLocaleDateString("es-ES", { weekday: 'short', day: 'numeric', month: 'short' });
+
+            // Extraer ejercicios detallados si existen
+            const exercisesInfo = log.detailedLogs && log.detailedLogs.length > 0
+                ? log.detailedLogs.map(l => l.exerciseName).join(", ")
+                : `${log.exercisesCompleted} ejercicios (sin detalle)`;
+
+            return `- ${date} [${log.routineName || 'Entrenamiento'}]: ${exercisesInfo}`;
         }).join("\n");
     };
 
+    const handleAnalyzeSplit = async () => {
+        const userContext = {
+            level: profile?.level || "Intermedio",
+            goal: profile?.goal || "Hipertrofia",
+            days: customSplit.length, // Use custom split length
+        };
+        const result = await evaluateSplitAction(customSplit, userContext as any); // Cast for minimal context
+        setSplitEvaluation(result);
+    };
+
     const handleGenerate = async () => {
-        if (!prompt) return;
+        if (!prompt && splitSelectionMode === 'auto') return; // Prompt required for auto
+
+        // Validation for manual mode
+        if (generationType === 'week' && splitSelectionMode === 'manual') {
+            const emptyDays = customSplit.some(d => d.muscles.length === 0);
+            if (emptyDays) {
+                toast.error("Por favor selecciona músculos para todos los días definidos.");
+                return;
+            }
+        }
+
         setLoading(true);
         try {
             const userContext = {
                 level: profile?.level || "Intermedio",
                 goal: profile?.goal || "Hipertrofia",
-                days: profile?.days || 4,
+                days: generationType === 'week'
+                    ? (splitSelectionMode === 'manual' ? customSplit.length : (profile?.days || 4))
+                    : 1, // Single day = 1
                 equipment: profile?.equipment || "Gimnasio Comercial",
                 gender: profile?.gender,
                 age: profile?.age
@@ -69,17 +110,28 @@ export default function AIRoutineGenerator({ onRoutineGenerated }: { onRoutineGe
 
             const enhancedContext = {
                 ...userContext,
-                splitType: splitType !== "auto" ? splitType : undefined,
+                splitType: generationType === 'week' && splitSelectionMode === 'auto' && splitType !== "auto" ? splitType : undefined,
                 sessionDuration: parseInt(sessionDuration),
                 intensity,
                 specificFocus: specificFocus !== "balanced" ? specificFocus : undefined,
                 repRange: repRange !== "auto" ? repRange : undefined,
+                // Pass Custom Split Info via context or a new param
+                generationType,
+                customSplit: splitSelectionMode === 'manual' ? customSplit : undefined
             };
 
-            const result = await generateRoutineAction(prompt, enhancedContext, cleanExercises, historySummary);
+            // Note: I need to update generateRoutineAction signature OR pack this into context.
+            // For now, packing into checking context or a new argument?
+            // The easiest is to inject it into the Prompt text or handle it inside the action if I pass it.
+            // I will opt to pass it as part of the context object which is flexible, but I'll need to update the type definition of UserContext if I want to be strict,
+            // OR just cast it here.
+            // Let's rely on the prompt construction in the server action to handle "Custom Split".
+
+            const result = await generateRoutineAction(prompt, enhancedContext as any, cleanExercises, historySummary);
             setGeneratedRoutine(result);
             toast.success("¡Rutina generada con éxito!");
-        } catch {
+        } catch (e) {
+            console.error(e);
             toast.error("Error al generar la rutina");
         } finally {
             setLoading(false);
@@ -147,7 +199,7 @@ export default function AIRoutineGenerator({ onRoutineGenerated }: { onRoutineGe
                         <FaMagic /> Diseñador de Rutinas IA
                     </DialogTitle>
                     <DialogDescription>
-                        La IA utilizará tu biblioteca y tu historial para crear el plan perfecto.
+                        Configura tu rutina semanal o sesión única.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -171,8 +223,18 @@ export default function AIRoutineGenerator({ onRoutineGenerated }: { onRoutineGe
                             setRepRange={setRepRange}
                             specificFocus={specificFocus}
                             setSpecificFocus={setSpecificFocus}
+                            // New Props
+                            generationType={generationType}
+                            setGenerationType={setGenerationType}
+                            splitSelectionMode={splitSelectionMode}
+                            setSplitSelectionMode={setSplitSelectionMode}
+                            customSplit={customSplit}
+                            setCustomSplit={setCustomSplit}
+                            splitEvaluation={splitEvaluation}
+                            onAnalyzeSplit={handleAnalyzeSplit}
                         />
                     ) : (
+                        // ... existing preview
                         <GeneratedRoutinePreview
                             routine={generatedRoutine}
                             onDiscard={() => setGeneratedRoutine(null)}
@@ -184,8 +246,9 @@ export default function AIRoutineGenerator({ onRoutineGenerated }: { onRoutineGe
                     )}
                 </div>
 
-                {/* Swap Dialog */}
+                {/* ... Swap Dialog ... */}
                 <Dialog open={!!swappingExercise} onOpenChange={(open) => !open && setSwappingExercise(null)}>
+                    {/* ... existing swap content ... */}
                     <DialogContent className="bg-zinc-950/95 backdrop-blur-xl border-white/10 text-white z-50">
                         <DialogHeader>
                             <DialogTitle>Cambiar Ejercicio</DialogTitle>

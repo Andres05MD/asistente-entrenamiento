@@ -24,12 +24,14 @@ export async function generateExerciseAction(
   - Género: ${userContext.gender || 'No especificado'}
 
   Genera un ejercicio que sea seguro, efectivo y adecuado para el contexto.
+  IMPORTANTE: Define el tipo de agarre óptimo (supino, prono, neutro...) y cómo maximiza la activación.
   
   FORMATO DE RESPUESTA (JSON estricto):
   Devuelve SOLO un objeto JSON con la siguiente estructura:
   {
     "name": "Nombre técnico del ejercicio (Ej: Press de Banca Plano con Barra)",
     "muscleGroup": "Grupo muscular principal (Ej: Pecho)",
+    "grip": "Tipo de agarre y efecto biomecánico (Ej: 'Prono ancho - énfasis pectoral')",
     "description": "Explicación detallada de la técnica correcta, paso a paso, enfocada en la ejecución segura y máxima estimulación.",
     "videoUrl": ""  // Dejar vacío, el usuario lo puede rellenar luego
   }`;

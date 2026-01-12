@@ -102,6 +102,11 @@ export default function AIExerciseGenerator({ onExerciseGenerated }: { onExercis
                                                 <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded-full border border-emerald-500/20">
                                                     {generatedExercise.muscleGroup || "General"}
                                                 </span>
+                                                {generatedExercise.grip && (
+                                                    <span className="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded-full border border-orange-500/20">
+                                                        {generatedExercise.grip}
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
                                         <div className="p-3 bg-white/5 rounded-full">

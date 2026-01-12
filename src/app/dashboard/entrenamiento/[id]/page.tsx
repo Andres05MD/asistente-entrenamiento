@@ -17,10 +17,13 @@ interface ActiveSet {
     reps: string;
     weight: string;
     completed: boolean;
+    isSuggested?: boolean;
 }
 
 interface ActiveExercise extends Exercise {
     activeSets: ActiveSet[];
+    rpe?: number; // 1-10 Scale
+    feedback?: string;
 }
 
 export default function ActiveTrainingPage() {
@@ -44,49 +47,85 @@ export default function ActiveTrainingPage() {
     const lastPerformances = useMemo(() => {
         if (!workoutLogs || workoutLogs.length === 0) return {};
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const map: Record<string, any[]> = {};
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const map: Record<string, any[]> = {};
 
-        // Iterate backwards (newest to oldest)
-        for (let i = workoutLogs.length - 1; i >= 0; i--) {
-            const log = workoutLogs[i];
-            if (!log.detailedLogs) continue;
+            // Limit to last 50 logs to prevent performance issues on huge histories
+            const recentLogs = workoutLogs.slice(-50).reverse(); // Newest first
 
-            for (const detail of log.detailedLogs) {
-                // Only store if we haven't found a more recent one
-                if (!map[detail.exerciseName]) {
-                    map[detail.exerciseName] = detail.sets;
+            for (const log of recentLogs) {
+                if (!log.detailedLogs) continue;
+
+                for (const detail of log.detailedLogs) {
+                    // Only store if we haven't found a more recent one
+                    if (!map[detail.exerciseName]) {
+                        map[detail.exerciseName] = detail.sets;
+                    }
                 }
             }
+            return map;
+        } catch (error) {
+            console.error("Error processing history", error);
+            return {};
         }
-        return map;
     }, [workoutLogs]);
 
-    // Find routine and initialize state
+    // Find routine and apply Smart Suggestions
     useEffect(() => {
-        if (rutinas.length > 0 && params.id) {
+        if (rutinas.length > 0 && params.id && Object.keys(lastPerformances).length >= 0) {
             const routine = rutinas.find(r => r.id === params.id);
             if (routine && routine.days.length > 0) {
-                // For simplicity, picking the first day or letting user choose could be an option.
-                // Assuming we clicked "Start" on a specific day from the previous screen would be better,
-                // but for now let's default to the first day of the routine.
                 const day = routine.days[0];
                 setRoutineName(routine.routineName);
                 setActiveRoutine(day);
 
-                // Initialize exercises with empty sets structure based on prescribed sets
+                // Initialize exercises with Progressive Overload Logic
                 const initialExercises = day.exercises.map(ex => {
                     const numSets = parseInt(ex.sets || "3", 10) || 3;
+                    const prevSets = lastPerformances[ex.name];
+
+                    // Find best previous set (max weight) to base suggestions on
+                    const bestPrevSet = prevSets ? [...prevSets].sort((a, b) => b.weight - a.weight)[0] : null;
+
                     return {
                         ...ex,
-                        activeSets: Array(numSets).fill({ reps: ex.reps || "0", weight: "0", completed: false })
+                        activeSets: Array(numSets).fill(null).map((_, idx) => {
+                            let suggestedWeight = "0";
+                            let suggestedReps = ex.reps?.split('-')[0] || "10"; // Default to bottom of range
+                            let isSuggested = false;
+
+                            if (bestPrevSet) {
+                                isSuggested = true;
+                                const lastWeight = parseFloat(bestPrevSet.weight);
+                                const lastReps = parseFloat(bestPrevSet.reps);
+
+                                // Progressive Overload Algo:
+                                // If last time they did > 10 reps or hit the top of typical range, suggest +2.5kg
+                                if (lastReps >= 10) {
+                                    suggestedWeight = (lastWeight + 2.5).toString();
+                                    suggestedReps = (Math.max(6, lastReps - 2)).toString(); // Drop reps slightly when increasing weight
+                                } else {
+                                    // Otherwise keep weight, try to add 1 rep
+                                    suggestedWeight = lastWeight.toString();
+                                    suggestedReps = (lastReps + 1).toString();
+                                }
+                            }
+
+                            return {
+                                reps: suggestedReps,
+                                weight: suggestedWeight,
+                                completed: false,
+                                isSuggested
+                            };
+                        })
                     };
                 });
                 setExercises(initialExercises);
                 setIsRunning(true);
             }
         }
-    }, [rutinas, params.id]);
+    }, [rutinas, params.id, lastPerformances]);
 
     // Timer Logic (Workout Duration)
     useEffect(() => {
@@ -128,7 +167,7 @@ export default function ActiveTrainingPage() {
             gain.connect(ctx.destination);
 
             osc.type = "sine";
-            osc.frequency.setValueAtTime(880, ctx.currentTime); // High pitch beep
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
             gain.gain.setValueAtTime(0.5, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
@@ -147,22 +186,38 @@ export default function ActiveTrainingPage() {
     };
 
     const handleSetChange = (exIndex: number, setIndex: number, field: keyof ActiveSet, value: string | boolean) => {
-        const newExercises = [...exercises];
-        newExercises[exIndex].activeSets[setIndex] = {
-            ...newExercises[exIndex].activeSets[setIndex],
-            [field]: value
-        };
-        setExercises(newExercises);
+        setExercises(prevExercises => {
+            const newExercises = [...prevExercises];
+            const updatedExercise = { ...newExercises[exIndex] };
+            const updatedSets = [...updatedExercise.activeSets];
 
-        // Validar si el set está marcado como completado y el timer no está corriendo
+            updatedSets[setIndex] = {
+                ...updatedSets[setIndex],
+                [field]: value
+            };
+
+            updatedExercise.activeSets = updatedSets;
+            newExercises[exIndex] = updatedExercise;
+
+            return newExercises;
+        });
+
         if (field === "completed" && value === true) {
-            const exerciseRestString = exercises[exIndex].rest || "60s";
-            // Extraer solo los números del string (ej: "90s" -> 90)
+            const exercise = exercises[exIndex];
+            const exerciseRestString = exercise.rest || "60s";
             const restSeconds = parseInt(exerciseRestString.replace(/\D/g, '')) || 60;
 
             setRestTimer(restSeconds);
             setIsResting(true);
         }
+    };
+
+    const handleFeedbackChange = (exIndex: number, field: 'rpe' | 'feedback', value: number | string) => {
+        setExercises(prev => {
+            const newEx = [...prev];
+            newEx[exIndex] = { ...newEx[exIndex], [field]: value };
+            return newEx;
+        });
     };
 
     const skipRest = () => {
@@ -173,7 +228,6 @@ export default function ActiveTrainingPage() {
     const finishWorkout = async () => {
         setIsRunning(false);
 
-        // Calculate total stats
         let totalVolume = 0;
         let setsCompleted = 0;
 
@@ -188,7 +242,6 @@ export default function ActiveTrainingPage() {
             });
         });
 
-        // Prepare detailed logs
         const detailedLogs = exercises.map(ex => {
             const completedSets = ex.activeSets.map((set, index) => ({
                 setNumber: index + 1,
@@ -202,9 +255,12 @@ export default function ActiveTrainingPage() {
             return {
                 exerciseName: ex.name,
                 exerciseId: ex.id,
-                sets: completedSets // Include sets in the log
+                sets: completedSets,
+                // Add optional feedback to logs if needed in backend (currently not in ExerciseLog type but good to have prepared)
+                notes: ex.feedback,
+                rpe: ex.rpe
             };
-        }).filter(Boolean) as ExerciseLog[]; // Remove nulls
+        }).filter(Boolean) as ExerciseLog[];
 
         if (setsCompleted === 0) {
             toast.error("No has completado ninguna serie.");
@@ -224,7 +280,7 @@ export default function ActiveTrainingPage() {
             router.push("/dashboard/avances");
         } catch (error) {
             console.error(error);
-            setIsRunning(true); // Resume on error
+            setIsRunning(true);
         }
     };
 
@@ -271,9 +327,16 @@ export default function ActiveTrainingPage() {
                     return (
                         <Card key={exIndex} className="bg-card/50 backdrop-blur-xl border-white/5 overflow-hidden">
                             <CardHeader className="bg-white/5 py-3">
-                                <CardTitle className="text-base flex justify-between">
-                                    <span>{exercise.name}</span>
-                                    <span className="text-xs font-normal text-muted-foreground bg-black/40 px-2 py-1 rounded">
+                                <CardTitle className="text-base flex justify-between items-start">
+                                    <div className="flex flex-col gap-1">
+                                        <span>{exercise.name}</span>
+                                        {exercise.grip && (
+                                            <span className="text-[10px] text-orange-400 font-normal">
+                                                {exercise.grip}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <span className="text-xs font-normal text-muted-foreground bg-black/40 px-2 py-1 rounded shrink-0 ml-2">
                                         {exercise.rest || "60s"} descanso
                                     </span>
                                 </CardTitle>
@@ -303,21 +366,24 @@ export default function ActiveTrainingPage() {
                                             <div className="col-span-2 text-center text-xs opacity-50 font-mono">
                                                 {prevSet ? `${prevSet.reps}x${prevSet.weight}` : "-"}
                                             </div>
-                                            <div className="col-span-3">
+                                            <div className="col-span-3 relative">
                                                 <Input
                                                     type="number"
                                                     value={set.weight}
                                                     onChange={(e) => handleSetChange(exIndex, setIndex, "weight", e.target.value)}
-                                                    className="h-8 text-center bg-black/20 border-white/10 focus:border-primary/50"
+                                                    className={`h-8 text-center bg-black/20 focus:border-primary/50 ${set.isSuggested && !set.completed ? 'border-purple-500/60 text-purple-200' : 'border-white/10'}`}
                                                     placeholder="0"
                                                 />
+                                                {set.isSuggested && !set.completed && (
+                                                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-purple-500 rounded-full animate-pulse" title="Sugerencia Inteligente" />
+                                                )}
                                             </div>
-                                            <div className="col-span-3">
+                                            <div className="col-span-3 relative">
                                                 <Input
                                                     type="number"
                                                     value={set.reps}
                                                     onChange={(e) => handleSetChange(exIndex, setIndex, "reps", e.target.value)}
-                                                    className="h-8 text-center bg-black/20 border-white/10 focus:border-primary/50"
+                                                    className={`h-8 text-center bg-black/20 focus:border-primary/50 ${set.isSuggested && !set.completed ? 'border-purple-500/60 text-purple-200' : 'border-white/10'}`}
                                                     placeholder="0"
                                                 />
                                             </div>
@@ -331,6 +397,39 @@ export default function ActiveTrainingPage() {
                                         </motion.div>
                                     );
                                 })}
+
+                                {/* Feedback Section */}
+                                <div className="p-3 border-t border-white/5 bg-black/40 space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-xs text-muted-foreground">Dificultad (RPE):</span>
+                                        <div className="flex gap-1">
+                                            {[
+                                                { val: 7, label: "Justo", color: "bg-green-500/20 text-green-400 hover:bg-green-500/30 border-green-500/20" },
+                                                { val: 9, label: "Difícil", color: "bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 border-yellow-500/20" },
+                                                { val: 10, label: "Fallo", color: "bg-red-500/20 text-red-400 hover:bg-red-500/30 border-red-500/20" }
+                                            ].map((opt) => (
+                                                <button
+                                                    key={opt.val}
+                                                    onClick={() => handleFeedbackChange(exIndex, 'rpe', exercise.rpe === opt.val ? 0 : opt.val)}
+                                                    className={`px-3 py-1 rounded text-xs border transition-all ${exercise.rpe === opt.val ? opt.color.replace('/20', '/50') : 'border-transparent bg-white/5 text-muted-foreground hover:bg-white/10'}`}
+                                                >
+                                                    {opt.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {(exercise.rpe && exercise.rpe >= 9) && (
+                                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
+                                            <Input
+                                                placeholder="¿Qué complicación tuviste?"
+                                                className="h-8 text-xs bg-black/20 border-white/10 mt-2"
+                                                value={exercise.feedback || ""}
+                                                onChange={(e) => handleFeedbackChange(exIndex, 'feedback', e.target.value)}
+                                            />
+                                        </motion.div>
+                                    )}
+                                </div>
                             </CardContent>
                         </Card>
                     );
