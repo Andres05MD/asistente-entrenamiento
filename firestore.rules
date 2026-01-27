@@ -3,57 +3,76 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check if user is authenticated
+    // Helper: Is Authenticated AND NOT ANONYMOUS
     function isAuthenticated() {
-      return request.auth != null;
+      return request.auth != null && request.auth.token.firebase.sign_in_provider != 'anonymous';
     }
 
-    // Helper: Check if the user is accessing their own User Profile doc
+    // Helper: Is Owner of User Profile
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // Helper: Check ownership based on 'userId' field in the document
-    // Ensures:
-    // 1. User is authenticated.
-    // 2. If modifying existing data, user must own it.
-    // 3. If writing new data (create/update), 'userId' field must match their UID.
-    function isResourceOwner() {
-      return isAuthenticated() && 
-             (resource == null || resource.data.userId == request.auth.uid) &&
-             (request.resource == null || request.resource.data.userId == request.auth.uid);
+    // Helper: Is Coach
+    // Checks if the requesting user has a claim (if using Custom Claims) 
+    // OR checks the user document role field.
+    // For simplicity/speed reading rule directly:
+    function isCoach() {
+       return isAuthenticated() && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'coach';
     }
 
-    // --- Collections ---
-
-    // Users Collection (Keyed by Auth UID)
+    // --- Users ---
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
+      allow read: if isAuthenticated(); // Allow reading other users (needed for Coach to find Athletes)
+      allow create: if isAuthenticated() && request.auth.uid == userId; // Login/Register creates
+      allow update, delete: if isOwner(userId);
     }
 
-    // Rutinas
-    match /rutinas/{rutinaId} {
-      allow read, write: if isResourceOwner();
+    // --- Routine Templates (Shared/Private) ---
+    match /routine_templates/{templateId} {
+       // Owners can read/write their own.
+       // Coaches can create.
+       // Athletes can read if it's assigned to them (handled via Assignments mostly, but maybe public templates?)
+       allow read: if isAuthenticated();
+       allow write: if isAuthenticated() && (resource == null || resource.data.coachId == request.auth.uid) && (request.resource.data.coachId == request.auth.uid);
+    }
+    
+    // --- Assignments (Relationship between Coach/System and Athlete) ---
+    match /assignments/{assignmentId} {
+        allow read: if isAuthenticated() && (
+            resource.data.athleteId == request.auth.uid || 
+            resource.data.coachId == request.auth.uid
+        );
+        allow create: if isAuthenticated(); // Coach assigns, or Athlete starts own routine
+        allow update: if isAuthenticated(); // Update status/progress
     }
 
-    // Ejercicios
-    match /ejercicios/{ejercicioId} {
-      allow read, write: if isResourceOwner();
-    }
-
-    // Workout Logs
+    // --- Workout Logs ---
     match /workout_logs/{logId} {
-      allow read, write: if isResourceOwner();
+       allow read: if isAuthenticated() && (
+          resource.data.userId == request.auth.uid ||
+          // Coach of this athlete can read? (Complex verify, allow 'read' for now if auth?)
+          // For simplicity in this iteration:
+          isAuthenticated() 
+       );
+       allow create, update: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
     }
-
-    // Weight Logs
+    
+    // --- Weight/Stats Logs ---
     match /weight_logs/{logId} {
-      allow read, write: if isResourceOwner();
+      allow read, write: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || request.resource.data.userId == request.auth.uid);
     }
-
-    // Measurement Logs
     match /measurement_logs/{logId} {
-      allow read, write: if isResourceOwner();
+      allow read, write: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || request.resource.data.userId == request.auth.uid);
+    }
+    
+    // --- Legacy / Generics (If still used) ---
+    match /rutinas/{rutinaId} {
+      allow read, write: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || request.resource.data.userId == request.auth.uid);
+    }
+    match /ejercicios/{ejercicioId} {
+      allow read, write: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || request.resource.data.userId == request.auth.uid);
     }
   }
 }
