@@ -62,72 +62,9 @@ export default function EjerciciosPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-white">Biblioteca de Ejercicios</h1>
-                    <p className="text-muted-foreground">Administra tus ejercicios personalizados.</p>
+                    <p className="text-muted-foreground">Consulta la técnica y detalles de los ejercicios.</p>
                 </div>
-                <div className="flex gap-2">
-                    <AIExerciseGenerator onExerciseGenerated={handleSaveGeneratedExercise} />
-
-                    <Dialog open={open} onOpenChange={setOpen}>
-                        <DialogTrigger asChild>
-                            <PremiumButton className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
-                                <FaPlus className="mr-2" /> Nuevo Manual
-                            </PremiumButton>
-                        </DialogTrigger>
-                        <DialogContent className="glass-dialog text-white">
-                            <DialogHeader>
-                                <DialogTitle>Agregar Nuevo Ejercicio</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4 py-4">
-                                <div className="space-y-2">
-                                    <Label>Nombre</Label>
-                                    <Input
-                                        placeholder="Ej: Press de Banca"
-                                        value={newExercise.name}
-                                        onChange={(e) => setNewExercise({ ...newExercise, name: e.target.value })}
-                                        className="bg-white/5 border-white/10 text-white"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Grupo Muscular</Label>
-                                    <Select
-                                        value={newExercise.muscleGroup}
-                                        onValueChange={(val) => setNewExercise({ ...newExercise, muscleGroup: val })}
-                                    >
-                                        <SelectTrigger className="bg-white/5 border-white/10 text-white">
-                                            <SelectValue placeholder="Selecciona..." />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-zinc-900 border-white/10">
-                                            {muscleGroups.map(g => (
-                                                <SelectItem key={g} value={g}>{g}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>URL Video (Opcional)</Label>
-                                    <Input
-                                        placeholder="https://youtube.com/..."
-                                        value={newExercise.videoUrl}
-                                        onChange={(e) => setNewExercise({ ...newExercise, videoUrl: e.target.value })}
-                                        className="bg-white/5 border-white/10 text-white"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Descripción (Opcional)</Label>
-                                    <Input
-                                        placeholder="Notas sobre la técnica..."
-                                        value={newExercise.description || ""}
-                                        onChange={(e) => setNewExercise({ ...newExercise, description: e.target.value })}
-                                        className="bg-white/5 border-white/10 text-white"
-                                    />
-                                </div>
-                                <PremiumButton onClick={handleCreate} className="w-full bg-primary mt-4" disabled={createEjercicio.isPending}>
-                                    {createEjercicio.isPending ? "Guardando..." : "Guardar"}
-                                </PremiumButton>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                {/* Generadores eliminados para Atletas */}
             </div>
 
             <div className="space-y-8">
@@ -179,17 +116,7 @@ export default function EjerciciosPage() {
                                                 <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{ex.description}</p>
                                             )}
                                             <div className="flex justify-end pt-2">
-                                                <PremiumButton
-                                                    size="icon"
-                                                    variant="ghost"
-                                                    className="hover:bg-red-500/20 hover:text-red-400 h-8 w-8 z-10"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        if (ex.id) handleDelete(ex.id)
-                                                    }}
-                                                >
-                                                    <FaTrash className="h-4 w-4" />
-                                                </PremiumButton>
+                                                <Badge variant="outline" className="text-[10px] text-zinc-500">Solo Lectura</Badge>
                                             </div>
                                         </CardContent>
                                     </Card>

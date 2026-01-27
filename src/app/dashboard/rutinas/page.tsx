@@ -74,9 +74,9 @@ export default function RutinasPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-6">
                 <div>
                     <h1 className="text-4xl font-bold tracking-tight text-white mb-2">Mis Rutinas</h1>
-                    <p className="text-lg text-muted-foreground">Gestiona y personaliza tus planes de entrenamiento.</p>
+                    <p className="text-lg text-muted-foreground">Tus planes de entrenamiento activos.</p>
                 </div>
-                <AIRoutineGenerator onRoutineGenerated={handleSaveRoutine} />
+                {/* Generador eliminado para Atletas */}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -128,27 +128,7 @@ export default function RutinasPage() {
                                         </div>
                                     </CardContent>
                                     <CardFooter className="flex justify-end gap-2 border-t border-white/5 pt-4 mt-auto bg-black/20">
-                                        <PremiumButton
-                                            size="sm"
-                                            variant="ghost"
-                                            className="h-9 w-9 p-0 rounded-lg hover:bg-blue-500/10 hover:text-blue-400 transition-colors"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                // Edit logic
-                                            }}
-                                        >
-                                            <FaEdit className="h-4 w-4" />
-                                        </PremiumButton>
-                                        <PremiumButton
-                                            size="sm"
-                                            variant="ghost"
-                                            className="h-9 w-9 p-0 rounded-lg hover:bg-red-500/10 hover:text-red-400 transition-colors"
-                                            onClick={(e) => {
-                                                if (rutina.id) handleDelete(rutina.id, e);
-                                            }}
-                                        >
-                                            <FaTrash className="h-4 w-4" />
-                                        </PremiumButton>
+                                        <Badge variant="outline" className="text-xs text-zinc-500">Solo Lectura</Badge>
                                     </CardFooter>
                                 </Card>
                             </Link>
