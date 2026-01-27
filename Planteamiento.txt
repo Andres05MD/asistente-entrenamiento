@@ -1,155 +1,21 @@
-# Documentación Técnica: Asistente de Entrenamiento con IA
+Este proyecto consiste en el desarrollo de un Asistente de Entrenamiento Inteligente, una plataforma web diseñada para optimizar el rendimiento físico mediante el uso de Inteligencia Artificial. El sistema utiliza el SDK de Groq para actuar como un entrenador personal virtual, capaz de generar rutinas personalizadas, analizar el progreso histórico y ofrecer recomendaciones proactivas para evitar el estancamiento de los usuarios.
 
-## 1. Resumen Ejecutivo
-Desarrollo de un **Asistente de Entrenamiento Inteligente** basado en web, diseñado para optimizar el rendimiento físico del usuario mediante planificación personalizada, seguimiento de progreso y análisis de datos. La plataforma integrará **Inteligencia Artificial (Groq SDK)** para actuar como un entrenador personal virtual, capaz de generar rutinas adaptativas, analizar el rendimiento histórico y ofrecer recomendaciones proactivas para evitar estancamientos.
+Construida con tecnologías modernas como Next.js, TypeScript y Firebase, la aplicación ofrece una experiencia visual de alta calidad con un diseño oscuro y moderno, optimizado especialmente para su uso en dispositivos móviles dentro del gimnasio. El flujo de trabajo abarca desde un registro detallado del "Perfil de Atleta" —donde se capturan objetivos, experiencia y equipo disponible— hasta un panel de control que muestra resúmenes diarios, rachas de actividad y acceso rápido a las funciones principales.
 
-## 2. Stack Tecnológico
-La arquitectura se basa en un ecosistema moderno, escalable y reactivo:
+Entre sus capacidades más destacadas se encuentra un generador de rutinas por IA que ahora garantiza sesiones equilibradas de entre 6 y 8 ejercicios, sincronizando automáticamente cualquier ejercicio nuevo con la biblioteca personal. Además, incluye un chat interactivo denominado "Antigravity Coach" que ofrece consejos profesionales en un formato fácil de leer.
 
-*   **Core:** Next.js (React Framework), TypeScript.
-*   **IA & Procesamiento:** Groq SDK (Modelos Llama/Mixtral/Qwen).
-*   **Estilos & UI:** TailwindCSS, Shadcn/ui, Framer Motion (para micro-interacciones premium), React Icons.
-*   **Gestión de Estado & Datos:** React Query (TanStack Query), React Hook Form, Zod (Validación).
-*   **Backend & Base de Datos:** Firebase (Auth, Firestore, Storage, Analytics).
-*   **Utilidades:** Axios, React Dropzone, React Player, SweetAlert2, React Hot Toast.
+En sus actualizaciones más recientes de enero de 2026, se ha reforzado la seguridad de los datos mediante reglas estrictas de acceso en la base de datos y se ha mejorado la organización de la biblioteca de ejercicios por grupos musculares. La arquitectura del código también se ha modularizado para permitir un crecimiento escalable, integrando elementos como indicadores de carga visual y un sistema de navegación más intuitivo que facilita el seguimiento de los entrenamientos y la evolución física del usuario.
 
-## 3. Especificaciones de Diseño y UX
-*   **Estética:** "Premium Dark Glassmorphism". Uso de transparencias, desenfoques (backdrop-filter), gradientes sutiles y tipografía moderna (Inter/Roboto).
-*   **Responsividad:** Enfoque *Mobile-First*. La experiencia en móviles debe ser nativa, con áreas táctiles optimizadas y navegación mediante Sidebar colapsable o Bottom Navigation en móviles.
-*   **Accesibilidad:** Soporte completo de modo oscuro para reducir fatiga visual en entornos de gimnasio.
+Se realizara una reestructuración del proyecto para organizar el workflow de uso del usuario, de manera que se pueda tener una experiencia mas fluida y comoda.
 
-## 4. Arquitectura de la Aplicación (Mapa del Sitio)
+Se implementara un sistema de roles para que ahora el Coach (Admin) pueda gestionar los entrenamientos de los atletas (Users).
 
-### A. Autenticación y Onboarding
-*   **Login:** Autenticación segura (Email/Password).
-*   **Registro:** Flujo guiado para capturar datos iniciales (Peso, Altura, Nivel de experiencia, Objetivos).
+El Coach podra asignar entrenamientos a los atletas, rutinas completas o solo ejercicios. Y tener las estadisticas de los atletas para evaluar su progreso.
 
-### B. Dashboard (Panel de Control)
-*   **Resumen Diario:** Tarjetas con el entrenamiento de hoy, calorías quemadas estimadas y racha de asistencia.
-*   **Accesos Rápidos:** Botones de acción flotantes para "Iniciar Entrenamiento Rápido" o "Registrar Peso".
-*   **Insights Rápidos:** "Has aumentado tu peso en Banco Plano un 5% esta semana".
+El coach podra desarrollar rutinas predeterminas que podra asignar luego. Y una vez estan esten asignadas se podran modificar.
 
-### C. Módulo de Rutinas (Core)
-*   **Banco de Rutinas:** Listado con filtrado avanzado (por grupo muscular, duración, dificultad).
-*   **Constructor de Rutinas:** Interfaz Drag-and-Drop para crear rutinas personalizadas.
-*   **Generador IA:** "Generar rutina de hipertrofia para pierna de 1 hora" (Usa Groq API).
+Los atletas podran ver sus entrenamientos asignados y los ejercicios que les han sido asignados. Podras registar el progreso de tus entrenamientos y evaluar tu progreso. Podran registrar sus medidas y pesos corporales. Y tambien los pesos en los ejercicios.
 
-### D. Módulo de Ejercicios
-*   **Biblioteca:** Base de datos de ejercicios con videos demostrativos (React Player) e instrucciones paso a paso.
-*   **Historial por Ejercicio:** Gráfico de evolución de 1RM (Repetición Máxima) y volumen de carga.
+Las rutinas deben contar con las variaciones para los ejercicios que se enfoquen en el mismo musculo. Por ejemplo, si el musculo es el pecho, se podran variar los ejercicios de pecho para que el usuario pueda variar los ejercicios y no se repita el mismo ejercicio en la rutina. Teniendo en cuenta las diferentes secciones del musculo. 
 
-### E. Seguimiento y Avances (Analytics)
-*   **Registro Biométrico:** Input de peso corporal, medidas corporales (bíceps, cintura, etc.) con fotos de progreso (Before/After).
-*   **Visualización de Datos:** Gráficos interactivos (Recharts/Chart.js) mostrando tendencias de fuerza y peso corporal.
-
-### F. Perfil y Ajustes
-*   **Gestión de Usuario:** Edición de credenciales y datos físicos.
-*   **Configuración del Entrenador IA:** Ajustar la "personalidad" o rigurosidad del asistente.
-
----
-
-## 5. Mejoras y Automatizaciones Propuestas
-
-### Automatización de Entrenamiento (AI Coach)
-1.  **Sobrecarga Progresiva Automática:** El sistema sugerirá automáticamente subir el peso o las repeticiones basándose en la sesión anterior. "La semana pasada hiciste 10x50kg, hoy intenta 10x52.5kg".
-2.  **Detección de Estancamiento:** Si el usuario no mejora sus marcas en 3 sesiones consecutivas, la IA sugerirá una semana de descarga o un cambio de variante de ejercicio.
-3.  **Ajuste Dinámico de Tiempo:** "Solo tengo 30 minutos hoy". La IA reestructura la rutina programada priorizando ejercicios compuestos y reduciendo descansos (Superseries).
-
-### Automatización de Flujo de Trabajo (UX)
-1.  **Registro Rápido (One-Tap Logging):** Al iniciar un ejercicio, pre-cargar los pesos y repeticiones de la última sesión para que el usuario solo tenga que confirmar o ajustar ligeramente.
-2.  **Temporizador de Descanso Inteligente:** Inicio automático del temporizador al marcar una serie como completada.
-3.  **Modo "Manos Libres" (Futuro):** Comandos de voz para registrar series ("Anota 10 repeticiones con 20 kilos") usando Web Speech API + Groq para interpretar.
-
-### Gamificación y Retención
-1.  **Sistema de Rachas y Niveles:** "Racha de 5 días", "Nivel: Intermedio II". Badges desbloqueables por hitos de volumen de carga (ej. "Levantaste 1 tonelada hoy").
-2.  **Recordatorios Contextuales:** Notificaciones push/email si el usuario falta a su día programado de entrenamiento.
-
-67: ---
-68: 
-69: ## 7. Logros Recientes y Actualizaciones (Enero 2026)
-70: 
-71: ### Optimización del Generador de Rutinas IA
-72: *   **Control de Volumen:** Se implementó una restricción estricta en el prompt del sistema para generar siempre entre **6 y 8 ejercicios por sesión**, asegurando rutinas manejables y efectivas.
-73: *   **Sincronización Automática de Ejercicios:** Al guardar una rutina generada, el sistema ahora detecta automáticamente los ejercicios que no existen en la biblioteca del usuario y los crea en tiempo real, asignándoles un grupo muscular (por IA o por defecto "Otro").
-74: 
-75: ### Mejoras en UX/UI
-76: *   **Biblioteca de Ejercicios Agrupada:** La vista de ejercicios ahora organiza visualmente las tarjetas por **Grupo Muscular** (Pecho, Espalda, Piernas, etc.), facilitando la navegación y el mantenimiento.
-77: *   **Navegación Intuitiva:** Los títulos y logos en el Sidebar (Escritorio) y Navbar (Móvil) ahora son interactivos y redirigen al Dashboard principal.
-*   **Feedback Visual Mejorado:** Se implementaron "Skeleton Loaders" en el Dashboard principal para mejorar la percepción de velocidad durante la carga de datos.
-*   **Refactorización de Arquitectura:** Se modularizó el código del Generador de Rutinas y se separaron los hooks de datos (`useData.ts`) en archivos independientes (`queries/useRutinas`, `useEjercicios`, etc.) para mejorar la mantenibilidad y escalabilidad del proyecto.
-78: 
-79: ### Chat IA "Antigravity Coach" 2.0
-80: *   **Personalidad Definida:** Se re-diseñó el prompt del sistema para adoptar una personalidad "Enérgica, Concisa y Profesional".
-81: *   **Formato Rico:** Integración de `ReactMarkdown` para renderizar las respuestas. Ahora el chat muestra **negritas**, *listas* y enlaces correctamente formateados en lugar de asteriscos crudos, mejorando drásticamente la legibilidad.
-82: 
-83: ### Flujo de Registro Avanzado (Perfil de Atleta)
-84: *   **Formulario Extendido:** Se reemplazó el registro básico por un "Perfil de Atleta" completo.
-85: *   **Nuevos Campos de Datos:** Ahora se captura y almacena en Firestore:
-86:     *   Edad y Género.
-87:     *   Nivel de Experiencia (Principiante/Intermedio/Avanzado).
-88:     *   Objetivo Principal (Hipertrofia/Fuerza/Resistencia).
-89:     *   Equipamiento Disponible.
-90:     *   Disponibilidad Semanal (Días).
-
-### Seguridad y Privacidad
-*   **Reglas de Firestore (Security Rules):** Se implementó un archivo `firestore.rules` robusto que garantiza la privacidad de los datos.
-    *   **Acceso Estricto por Propietario:** Cada usuario solo puede leer, escribir o modificar sus propios documentos (`users`, `rutinas`, `ejercicios`, `logs`).
-    *   **Validación de Creación:** Al crear nuevos registros, se fuerza que el `userId` coincida con el usuario autenticado.
-    *   **Protección de Rutas (Client-Side):** Se implementó una capa de seguridad en el frontend (`DashboardLayout` y páginas de Auth) que fuerza el inicio de sesión para acceder al sistema y redirige automáticamente a los usuarios autenticados lejos de las páginas de login/registro.
-
-### Navegación
-*   **Logout Accesible:** Se añadió un botón de "Cerrar Sesión" permanentemente visible en el Sidebar (escritorio) y menú móvil, asegurando que el usuario siempre pueda salir de su cuenta fácilmente.
-91: 
-92: ---
-93: 
-94: ## 8. Referencias de Implementación (Snippets)
-
-### Claves de API (Groq)
-`[CLAVE_ELIMINADA_POR_SEGURIDAD]`
-
-### Integración Groq SDK (Ejemplos)
-
-**Opción 1: Modelo OpenAI/GPT-OSS (Alto Rendimiento)**
-```javascript
-import { Groq } from 'groq-sdk';
-const groq = new Groq();
-const chatCompletion = await groq.chat.completions.create({
-  "messages": [{ "role": "user", "content": "Genera una rutina de pecho..." }],
-  "model": "openai/gpt-oss-120b",
-  "temperature": 1,
-  "max_completion_tokens": 8192,
-  "top_p": 1,
-  "stream": true,
-  "reasoning_effort": "medium"
-});
-```
-
-**Opción 2: Modelo Qwen (Eficiencia/Velocidad)**
-```javascript
-const chatCompletion = await groq.chat.completions.create({
-  "messages": [{ "role": "user", "content": "Analiza mi progreso..." }],
-  "model": "qwen/qwen3-32b",
-  "temperature": 0.6,
-  "max_completion_tokens": 4096,
-  "stream": true
-});
-```
-
-### Configuración de Firebase
-```javascript
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyChJjfXba0xShijyYI4O9ArIWavm7Krjrs",
-  authDomain: "asistente-entrenamiento.firebaseapp.com",
-  projectId: "asistente-entrenamiento",
-  storageBucket: "asistente-entrenamiento.firebasestorage.app",
-  messagingSenderId: "781389690938",
-  appId: "1:781389690938:web:670b282c2379192331dd03",
-  measurementId: "G-VBCHLMCQES"
-};
-
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-```
+Con respecto a la integracion de la ia esta se debe mejorar considerablemente. Se debe implementar un chatbot que pueda interactuar con el usuario y ofrecerle recomendaciones personalizadas. Y al momento de generar una rutina, esta debe ser personalizada para el usuario. Y aconsejarle sobre los ejercicios que debe realizar y los que no debe realizar. Debe ser un apoyo para que el usuario y el coach pueda tener un entrenamiento mas efectivo con los ejercicios que se le asignen.

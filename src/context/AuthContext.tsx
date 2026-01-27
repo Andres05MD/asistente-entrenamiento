@@ -53,9 +53,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         uid: user.uid,
                         email: user.email,
                         displayName: user.displayName,
-                        photoURL: user.photoURL
-                    });
+                        photoURL: user.photoURL,
+                        role: 'athlete'
+                    } as UserProfile);
                 }
+
                 setLoading(false);
             });
             return () => unsubscribeSnapshot();

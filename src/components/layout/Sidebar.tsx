@@ -9,8 +9,10 @@ import {
     FaRunning,
     FaChartLine,
     FaUser,
-    FaSignOutAlt
+    FaSignOutAlt,
+    FaCalendarCheck
 } from "react-icons/fa";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PremiumButton } from "@/components/ui/premium-button";
@@ -23,6 +25,7 @@ import toast from "react-hot-toast";
 
 const sidebarItems = [
     { href: "/dashboard", icon: FaHome, label: "Dashboard" },
+    { href: "/dashboard/plan", icon: FaCalendarCheck, label: "Mi Plan" },
     { href: "/dashboard/rutinas", icon: FaDumbbell, label: "Rutinas" },
     { href: "/dashboard/ejercicios", icon: FaRunning, label: "Ejercicios" },
     { href: "/dashboard/avances", icon: FaChartLine, label: "Avances" },

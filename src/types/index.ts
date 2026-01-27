@@ -13,6 +13,7 @@ export interface Exercise {
     rest?: string;
     notes?: string;
     exerciseId?: string | null;
+    targetArea?: string; // e.g. "Upper Chest", "Lower Back"
 }
 
 export interface DayRoutine {
@@ -59,6 +60,8 @@ export interface UserProfile {
     email: string | null;
     displayName: string | null;
     photoURL: string | null;
+    role: 'coach' | 'athlete';
+    coachId?: string; // Si es atleta, quién es su coach
     // Fitness Context
     level?: FitnessLevel;
     goal?: FitnessGoal;
@@ -123,3 +126,41 @@ export interface MeasurementLog {
     shoulders?: number;
     neck?: number;
 }
+
+export type UserRole = 'coach' | 'athlete';
+
+export interface RoutineTemplate {
+    id: string;
+    authorId: string;
+    name: string;
+    description: string;
+    exercises: RoutineExercise[];
+    isPublic: boolean;
+    tags?: string[];
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface RoutineExercise {
+    exerciseId: string;
+    name: string; // Denormalized for display
+    order: number;
+    sets: number; // or string based on previous definitions, keeping consitency
+    reps: string;
+    rest: string; // seconds
+    notes?: string;
+    muscleGroup?: string; // To help with variations
+}
+
+export interface RoutineAssignment {
+    id: string;
+    athleteId: string;
+    coachId: string;
+    routineId: string;
+    dateAssigned: string; // ISO Date
+    status: 'pending' | 'completed' | 'missed';
+    feedback?: string;
+    customizedRoutine: RoutineTemplate; // Snapshot
+    completedAt?: string;
+}
+

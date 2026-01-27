@@ -5,20 +5,33 @@ import { Button } from "@/components/ui/button";
 import { FaFire, FaCalendarCheck, FaDumbbell, FaPlus, FaWeight, FaArrowRight, FaTrophy, FaRuler, FaMagic, FaCheckCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useUser, useAvances, useRutinas } from "@/hooks/useData";
+import { useUser, useAvances, useRutinas, useAssignments } from "@/hooks/useData";
 import AnimatedCounter from "@/components/ui/animated-counter";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PremiumButton } from "@/components/ui/premium-button";
+import { isToday, isFuture, format } from "date-fns";
+import { es } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import AIInsights from "@/components/dashboard/AIInsights";
+
 
 export default function DashboardPage() {
     const router = useRouter();
     const { user, profile } = useUser();
-    const { workoutLogs, isLoading: isLoadingAvances } = useAvances();
+    const { workoutLogs, weightLogs, isLoading: isLoadingAvances } = useAvances();
     const { rutinas, isLoading: isLoadingRutinas } = useRutinas();
 
-    const isLoading = isLoadingAvances || isLoadingRutinas;
+    const { assignments, isLoading: isLoadingAssignments } = useAssignments();
+
+    const isLoading = isLoadingAvances || isLoadingRutinas || isLoadingAssignments;
+
+    // Assignment Logic
+    const todaysAssignment = assignments?.find(a => isToday(new Date(a.dateAssigned)));
+    // If no assignment today, show the next upcoming one
+    const nextAssignment = assignments?.find(a => isFuture(new Date(a.dateAssigned)));
+    const activeAssignment = todaysAssignment || nextAssignment;
 
     // Stats Logic
     const totalWorkouts = workoutLogs?.length || 0;
@@ -166,8 +179,18 @@ export default function DashboardPage() {
                 )}
             </motion.div>
 
+            <motion.div variants={itemVariants}>
+                <AIInsights
+                    profile={profile as any}
+                    workoutLogs={workoutLogs}
+                    weightLogs={weightLogs}
+                />
+            </motion.div>
+
+
             {/* Quick Actions */}
             <motion.div variants={itemVariants}>
+
                 <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                     <FaMagic className="text-purple-500 w-5 h-5" /> Accesos Rápidos
                 </h2>
@@ -219,7 +242,7 @@ export default function DashboardPage() {
 
             {/* Main Content Area */}
             <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-7">
-                {/* Quick Start / Next Workout */}
+                {/* Daily Workout / Next Assignment */}
                 <Card className="col-span-12 md:col-span-7 lg:col-span-4 bg-gradient-to-br from-zinc-900 to-black border-white/10 overflow-hidden relative group rounded-3xl shadow-2xl">
                     <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-700 pointer-events-none transform rotate-12 scale-150">
                         <FaDumbbell className="w-64 h-64 text-white" />
@@ -228,49 +251,76 @@ export default function DashboardPage() {
 
                     <CardHeader className="relative z-10 pb-2">
                         <CardTitle className="text-2xl text-white flex items-center gap-2">
-                            <span className="w-2 h-8 bg-green-500 rounded-full mr-2" />
-                            Siguiente Sesión
+                            <span className={cn(
+                                "w-2 h-8 rounded-full mr-2",
+                                todaysAssignment ? "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.6)]" : "bg-zinc-600"
+                            )} />
+                            {todaysAssignment ? "Tu Entrenamiento de Hoy" : "Siguiente Sesión"}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="relative z-10">
-                        {isLoading ? (
+                        {isLoadingAssignments ? (
                             <div className="space-y-4">
                                 <Skeleton className="h-[140px] w-full rounded-2xl bg-white/5" />
                             </div>
-                        ) : latestRoutine ? (
+                        ) : activeAssignment ? (
                             <div className="space-y-6">
                                 <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-md shadow-inner">
                                     <div className="flex items-center justify-between mb-3">
-                                        <span className="font-bold text-2xl text-green-400">{latestRoutine.routineName}</span>
-                                        <AnimatedBadge variant="default" className="shrink-0 bg-green-500/20 text-green-300 border-green-500/30">
-                                            {latestRoutine.days?.length || 0} Días / Semana
-                                        </AnimatedBadge>
+                                        <span className="font-bold text-2xl text-green-400">
+                                            {activeAssignment.customizedRoutine?.name || "Entrenamiento Asignado"}
+                                        </span>
+                                        <div className="flex flex-col items-end">
+                                            <AnimatedBadge
+                                                variant="default"
+                                                className={cn(
+                                                    "shrink-0 mb-1",
+                                                    isToday(new Date(activeAssignment.dateAssigned))
+                                                        ? "bg-green-500/20 text-green-300 border-green-500/30"
+                                                        : "bg-blue-500/20 text-blue-300 border-blue-500/30"
+                                                )}
+                                            >
+                                                {isToday(new Date(activeAssignment.dateAssigned)) ? "HOY" : format(new Date(activeAssignment.dateAssigned), "EEEE d", { locale: es })}
+                                            </AnimatedBadge>
+                                        </div>
                                     </div>
-                                    <p className="text-base text-zinc-400 line-clamp-2 leading-relaxed">
-                                        {latestRoutine.description || "Tu plan de entrenamiento personalizado para alcanzar tus metas."}
+                                    <p className="text-base text-zinc-400 line-clamp-2 leading-relaxed mb-4">
+                                        {activeAssignment.customizedRoutine?.description || "Sin descripción disponible."}
                                     </p>
+                                    <div className="flex gap-2 text-sm text-zinc-500">
+                                        <span className="flex items-center gap-1"><FaDumbbell /> {activeAssignment.customizedRoutine?.exercises?.length || 0} Ejercicios</span>
+                                    </div>
                                 </div>
                                 <PremiumButton
-                                    onClick={() => router.push(`/dashboard/rutinas/${latestRoutine.id}`)}
-                                    className="w-full h-14 text-lg bg-green-500 hover:bg-green-400 text-black font-bold rounded-xl shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transition-all duration-300"
+                                    onClick={() => router.push(`/dashboard/workout/${activeAssignment.id}`)}
+                                    className={cn(
+                                        "w-full h-14 text-lg font-bold rounded-xl shadow-lg transition-all duration-300",
+                                        todaysAssignment
+                                            ? "bg-green-500 hover:bg-green-400 text-black shadow-green-500/20 hover:shadow-green-500/40"
+                                            : "bg-zinc-700 hover:bg-zinc-600 text-white"
+                                    )}
                                 >
-                                    ¡Comenzar Entrenamiento! <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                    {todaysAssignment ? "¡Comenzar Ahora!" : "Ver Detalles"}
+                                    <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                                 </PremiumButton>
                             </div>
                         ) : (
                             <div className="text-center py-12 space-y-6">
                                 <div className="p-4 bg-zinc-800/50 rounded-full w-20 h-20 mx-auto flex items-center justify-center">
-                                    <FaDumbbell className="text-4xl text-zinc-600" />
+                                    <FaCalendarCheck className="text-4xl text-zinc-600" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-white mb-2">No tienes una rutina activa</h3>
-                                    <p className="text-zinc-400 max-w-[300px] mx-auto">Crea una nueva rutina manualmente o deja que la IA diseñe el plan perfecto para ti.</p>
+                                    <h3 className="text-xl font-bold text-white mb-2">¡Día de Descanso!</h3>
+                                    <p className="text-zinc-400 max-w-[300px] mx-auto">
+                                        No tienes asignaciones pendientes para hoy. ¡Disfruta tu recuperación!
+                                    </p>
                                 </div>
                                 <PremiumButton
                                     onClick={() => router.push("/dashboard/rutinas")}
-                                    className="bg-white text-black hover:bg-zinc-200 font-bold px-8 rounded-full"
+                                    variant="outline"
+                                    className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
                                 >
-                                    Crear Rutina
+                                    Ver todas mis rutinas
                                 </PremiumButton>
                             </div>
                         )}
