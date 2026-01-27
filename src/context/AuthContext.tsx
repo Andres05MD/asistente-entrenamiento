@@ -2,7 +2,8 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
+
 import { auth, db } from "@/lib/firebase";
 import { UserProfile } from "@/types";
 
@@ -39,26 +40,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (user) {
             setLoading(true);
-            const unsubscribeSnapshot = onSnapshot(doc(db, "users", user.uid), (doc) => {
-                if (doc.exists()) {
+            const unsubscribeSnapshot = onSnapshot(doc(db, "users", user.uid), async (snapshot) => {
+                if (snapshot.exists()) {
                     setProfile({
                         uid: user.uid,
                         email: user.email,
                         displayName: user.displayName,
                         photoURL: user.photoURL,
-                        ...doc.data()
+                        ...snapshot.data()
                     } as UserProfile);
+                    setLoading(false);
                 } else {
-                    setProfile({
+                    // Si el usuario existe en Auth pero no tiene perfil en Firestore (ej: Login Google nuevo)
+                    // Crear perfil por defecto.
+                    const newProfile: Partial<UserProfile> = {
                         uid: user.uid,
-                        email: user.email,
-                        displayName: user.displayName,
-                        photoURL: user.photoURL,
-                        role: 'athlete'
-                    } as UserProfile);
-                }
+                        email: user.email || "",
+                        displayName: user.displayName || "Usuario",
+                        photoURL: user.photoURL || undefined,
+                        role: "athlete",
+                        createdAt: new Date().toISOString()
+                    };
 
-                setLoading(false);
+                    // Crear documento en Firestore de manera no bloqueante (optimista)
+                    setDoc(doc(db, "users", user.uid), newProfile).catch(e => console.error("Error creating profile", e));
+
+                    setProfile({ ...newProfile } as UserProfile);
+                    setLoading(false);
+                }
             });
             return () => unsubscribeSnapshot();
         }
